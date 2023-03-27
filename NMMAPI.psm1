@@ -12,7 +12,7 @@ function Add-NMMCredentials {
         $scope,
         $secret
     )
-    process {
+    BEGIN {
         if (!$baseUri) {
             $baseUri = Read-Host -Prompt 'Please input your NMM URL, e.g. nmm.democompany.com'
         }
@@ -38,7 +38,12 @@ function Add-NMMCredentials {
         Set-Variable -Name 'nmmScope' -Value $scope -Scope Global 
         Set-Variable -Name 'nmmSecret' -Value $secret -Scope Global 
     }
+    PROCESS {
+        Write-Host "Testing connectivity to the NMM API located at $nmmBaseUri..."
+        Test-NMMAPI
+    }
 }
+
 function Get-NMMToken {
 
     if (!$nmmBaseURI -or !$nmmOauth -or !$nmmTenantId -or !$nmmClientId -or !$nmmScope -or !$nmmSecret) {
@@ -56,6 +61,45 @@ function Get-NMMToken {
         Set-Variable -Name 'nmmToken' -Value $nmmOAToken -Scope Global
     }
 }
+
+function Test-NMMAPI {
+    [CmdletBinding()]
+    Param()
+    BEGIN{
+        if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
+            Write-Warning "No NMM Token present, or expired, running Get-NMMToken now."
+            Get-NMMToken
+        }
+        $requestHeaders = @{
+            'accept' = 'application/json';
+            'authorization' = "Bearer " + $nmmToken.access_token
+        }
+        $begin = Get-Date
+    }
+    PROCESS {
+        Try{
+        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/test" -Headers $requestHeaders
+        $OK = $True
+        }
+        Catch{
+            $OK = $false
+            if($_.ErrorDetails.Message){
+                Write-Error $_.ErrorDetails.Message
+            }
+            else {
+                Write-Error $_
+            }
+        }
+        If ($OK) {
+            Write-Host "Successfully connected to the NMM API located at $nmmBaseUri!"
+        }
+    }
+    END {
+        $Runtime = New-TimeSpan -Start $begin -End (Get-Date)
+        
+    }
+}
+
 #EndRegion Authentication & Credentials
 
 #Region Accounts
@@ -1546,7 +1590,7 @@ function New-NMMSecureVariable {
         $Runtime = New-TimeSpan -Start $begin -End (Get-Date)
     }
 }
-function Update-NMMSecureVariable {
+function Set-NMMSecureVariable {
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory = $true)]
@@ -1782,7 +1826,7 @@ function New-NMMCustomerSecureVariable {
         $Runtime = New-TimeSpan -Start $begin -End (Get-Date)
     }
 }
-function Update-NMMCustomerSecureVariable {
+function Set-NMMCustomerSecureVariable {
     [CmdletBinding()]
     Param (
         [Alias("id")]
