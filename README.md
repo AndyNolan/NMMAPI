@@ -69,8 +69,6 @@ Add-NMMCredentials
 * Run `Get-NMMCustomers` to get a list of accounts that are configured in your NMM installation;
   * From here, you can see your organizations, organized by `ID` and by `Name`.
   * `ID` is key, as that will be used to identify which customer account(s) are being targeted by almost all cmdlets that are included in this module.
-<br>
-<br>
 
 ><details>
 ><summary>This module follows standard PowerShell naming conventions, and in general each action is named appropriately for the task it is intended to perform, expand me for more information on the action/verb structure!</summary>
