@@ -144,7 +144,7 @@ job
 In the event you enter a broad search term and there are multiple customer matches, you will be provided with a selection menu
 
 ```powershell
-New-NMMCustomerSecureVariable -customerSearch d -variableName NewVariable3 -variableValue NewValue3           
+New-NMMCustomerSecureVariable -customerSearch d -variableName NewVariabl|Ne3 -variableValue NewValue3           
 
 id name
 -- ----
@@ -170,41 +170,41 @@ This table corresponds to the most recent REST API endpoints in Nerdio Manager f
 **REST Method**|**PowerShell Command**|**Implemented**|**ETA**
 :-----:|:-----:|:-----:|:-----:
 |**Test**
-GET|[Test-NMMAPI](./docs/Test-NMMAPI.md)|Y|[x]
+GET|[Test-NMMAPI](./docs/Test-NMMAPI.md)|:heavy_check_mark:|
 |**Account Provisioning**
-POST|[Register-NMMAD](./docs/Register-NMMAD.md)|Y|
-POST|[Register-NMMFileStorage](./docs/Register-NMMFileStorage.md)|Y|
-POST|[Register-NMMNetwork](./docs/Register-NMMNetwork.md)|Y|
-POST|[Register-NMMTenant](./docs/Register-NMMTenant.md)|Y|
+POST|[Register-NMMAD](./docs/Register-NMMAD.md)|:heavy_check_mark:|
+POST|[Register-NMMFileStorage](./docs/Register-NMMFileStorage.md)|:heavy_check_mark:|
+POST|[Register-NMMNetwork](./docs/Register-NMMNetwork.md)|:heavy_check_mark:|
+POST|[Register-NMMTenant](./docs/Register-NMMTenant.md)|:heavy_check_mark:|
 |**Accounts**
-GET|[Get-NMMCustomers](./docs/Get-NMMCustomers.md)|Y|
+GET|[Get-NMMCustomers](./docs/Get-NMMCustomers.md)|:heavy_check_mark:|
 |**Storage Azure files**
 GET|[Get-NMMAzureFilesAutoscale](./docs/Get-NMMAzureFilesAutoscale.md)|N|Q2
 PUT|[Set-NMMAzureFilesAutoscale](./docs/Set-NMMAzureFilesAutoscale.md)|N|Q2
 POST|[Set-NMMAzureFilesAutoscaleStatus](./docs/Set-NMMAzureFilesAutoscaleStatus.md)|N|Q2
 |**App Role Assignments**
-GET|[Get-NMMAppRoleAssignments](./docs/Get-NMMAppRoleAssignments.md)|Y|
-GET|[Get-NMMAppRoles](./docs/Get-NMMAppRoles.md)|Y|
+GET|[Get-NMMAppRoleAssignments](./docs/Get-NMMAppRoleAssignments.md)|:heavy_check_mark:|
+GET|[Get-NMMAppRoles](./docs/Get-NMMAppRoles.md)|:heavy_check_mark:|
 |**Authentication**|These are internal to the NMMAPI module, for authentication into NMM
-N/A|[Add-NMMCredentials](./docs/Add-NMMCredentials.md)|Y|
-N/A|[Export-NMMCredentials](./docs/Export-NMMCredentials.md)|Y|
-GET|[Get-NMMToken](./docs/Get-NMMToken.md)|Y|
-N/A|[Import-NMMCredentials](./docs/Import-NMMCredentials.md)|Y|
+N/A|[Add-NMMCredentials](./docs/Add-NMMCredentials.md)|:heavy_check_mark:|
+N/A|[Export-NMMCredentials](./docs/Export-NMMCredentials.md)|:heavy_check_mark:|
+GET|[Get-NMMToken](./docs/Get-NMMToken.md)|:heavy_check_mark:|
+N/A|[Import-NMMCredentials](./docs/Import-NMMCredentials.md)|:heavy_check_mark:|
 |**Backup**
-POST|[Disable-NMMCustomerBackup](./docs/Disable-NMMCustomerBackup.md)|Y|
-POST|[Enable-NMMCustomerBackup](./docs/Enable-NMMCustomerBackup.md)|Y|
-GET|[Get-NMMCustomerProtectedItems](./docs/Get-NMMCustomerProtectedItems.md)|Y|
-GET|[Get-NMMCustomerRecoveryPoints](./docs/Get-NMMCustomerRecoveryPoints.md)|Y|
-POST|[Invoke-NMMCustomerBackup](./docs/Invoke-NMMCustomerBackup.md)|Y|
-POST|[Invoke-NMMCustomerRestore](./docs/Invoke-NMMCustomerRestore.md)|Y|
+POST|[Disable-NMMCustomerBackup](./docs/Disable-NMMCustomerBackup.md)|:heavy_check_mark:|
+POST|[Enable-NMMCustomerBackup](./docs/Enable-NMMCustomerBackup.md)|:heavy_check_mark:|
+GET|[Get-NMMCustomerProtectedItems](./docs/Get-NMMCustomerProtectedItems.md)|:heavy_check_mark:|
+GET|[Get-NMMCustomerRecoveryPoints](./docs/Get-NMMCustomerRecoveryPoints.md)|:heavy_check_mark:|
+POST|[Invoke-NMMCustomerBackup](./docs/Invoke-NMMCustomerBackup.md)|:heavy_check_mark:|
+POST|[Invoke-NMMCustomerRestore](./docs/Invoke-NMMCustomerRestore.md)|:heavy_check_mark:|
 |**Cost Estimator**
-GET|[Get-NMMEstimate](./docs/Get-NMMEstimate.md)|Y|
+GET|[Get-NMMEstimate](./docs/Get-NMMEstimate.md)|:heavy_check_mark:|
 |**Desktop Image**
-GET|[Get-NMMDesktopImage](./docs/Get-NMMDesktopImage.md)|Y|
-GET|[Get-NMMDesktopImageChangelog](./docs/Get-NMMDesktopImageChangelog.md)|Y|
-GET|[Get-NMMDesktopImageDetail](./docs/Get-NMMDesktopImageDetail.md)|Y|
-PUT|[Start-NMMDesktopImage](./docs/Start-NMMDesktopImage.md)|Y|
-PUT|[Stop-NMMDesktopImage](./docs/Stop-NMMDesktopImage.md)|Y|
+GET|[Get-NMMDesktopImage](./docs/Get-NMMDesktopImage.md)|:heavy_check_mark:|
+GET|[Get-NMMDesktopImageChangelog](./docs/Get-NMMDesktopImageChangelog.md)|:heavy_check_mark:|
+GET|[Get-NMMDesktopImageDetail](./docs/Get-NMMDesktopImageDetail.md)|:heavy_check_mark:|
+PUT|[Start-NMMDesktopImage](./docs/Start-NMMDesktopImage.md)|:heavy_check_mark:|
+PUT|[Stop-NMMDesktopImage](./docs/Stop-NMMDesktopImage.md)|:heavy_check_mark:|
 POST|[Create-NMMDesktopImageFromVM](./docs/Create-NMMDesktopImageFromVM.md)|N|Q2
 POST|[Create-NMMDesktopImageFromLibrary](./docs/Create-NMMDesktopImageFromLibrary.md)|N|Q2
 POST|[Clone-NMMDesktopImage](./docs/Clone-NMMDesktopImage.md)|N|Q2
@@ -214,31 +214,31 @@ PUT|[Invoke-NMMDesktopImageScriptedAction](./docs/Invoke-NMMDesktopImageScripted
 DELETE|[Remove-NMMDesktopImage](./docs/Remove-NMMDesktopImage.md)|N|Q2
 DELETE|[Remove-NMMDesktopImageSchedule](./docs/Remove-NMMDesktopImageSchedule.md)|N|Q2
 |**Directories**
-GET|[Get-NMMDirectories](./docs/Get-NMMDirectories.md)|Y|
+GET|[Get-NMMDirectories](./docs/Get-NMMDirectories.md)|:heavy_check_mark:|
 |**FSLogix Configs**
-GET|[Get-NMMFSlogixConfig](./docs/Get-NMMFSlogixConfig.md)|Y|
+GET|[Get-NMMFSlogixConfig](./docs/Get-NMMFSlogixConfig.md)|:heavy_check_mark:|
 |**Host**
 DELETE|[Remove-NMMHost](./docs/Remove-NMMHost.md)|N|Q2
-GET|[Get-NMMHosts](./docs/Get-NMMHosts.md)|Y|
-POST|[Restart-NMMHost](./docs/Restart-NMMHost.md)|Y|
-POST|[Start-NMMHost](./docs/Start-NMMHost.md)|Y|
-POST|[Stop-NMMHost](./docs/Stop-NMMHost.md)|Y|
+GET|[Get-NMMHosts](./docs/Get-NMMHosts.md)|:heavy_check_mark:|
+POST|[Restart-NMMHost](./docs/Restart-NMMHost.md)|:heavy_check_mark:|
+POST|[Start-NMMHost](./docs/Start-NMMHost.md)|:heavy_check_mark:|
+POST|[Stop-NMMHost](./docs/Stop-NMMHost.md)|:heavy_check_mark:|
 POST|[Create-NMMHost](./docs/Create-NMMHost.md)|N|Q2
 POST|[Set-NMMHostDrainMode](./docs/Set-NMMHostDrainMode.md)|N|Q2
 POST|[Invoke-NMMHostReimage](./docs/Invoke-NMMHostReimage.md)|N|Q2
 POST|[Set-NMMHostUserAssignment](./docs/Set-NMMHostUserAssignment.md)|N|Q2
 PUT|[Invoke-NMMHostScript](./docs/Invoke-NMMHostScript.md)|N|Q2
 |**Host Pools**
-GET|[Get-NMMHostPool](./docs/Get-NMMHostPool.md)|Y|
-GET|[Get-NMMHostPoolAD](./docs/Get-NMMHostPoolAD.md)|Y|
-GET|[Get-NMMHostPoolAssignedUsers](./docs/Get-NMMHostPoolAssignedUsers.md)|Y|
-GET|[Get-NMMHostPoolAutoscale](./docs/Get-NMMHostPoolAutoscale.md)|Y|
-GET|[Get-NMMHostPoolAVD](./docs/Get-NMMHostPoolAVD.md)|Y|
-GET|[Get-NMMHostPoolFSLogix](./docs/Get-NMMHostPoolFSLogix.md)|Y|
-GET|[Get-NMMHostPoolRDPSettings](./docs/Get-NMMHostPoolRDPSettings.md)|Y|
-GET|[Get-NMMHostPoolSessionTimeouts](./docs/Get-NMMHostPoolSessionTimeouts.md)|Y|
-GET|[Get-NMMHostPoolTags](./docs/Get-NMMHostPoolTags.md)|Y|
-GET|[Get-NMMHostPoolVMDeployment](./docs/Get-NMMHostPoolVMDeployment.md)|Y|
+GET|[Get-NMMHostPool](./docs/Get-NMMHostPool.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolAD](./docs/Get-NMMHostPoolAD.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolAssignedUsers](./docs/Get-NMMHostPoolAssignedUsers.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolAutoscale](./docs/Get-NMMHostPoolAutoscale.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolAVD](./docs/Get-NMMHostPoolAVD.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolFSLogix](./docs/Get-NMMHostPoolFSLogix.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolRDPSettings](./docs/Get-NMMHostPoolRDPSettings.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolSessionTimeouts](./docs/Get-NMMHostPoolSessionTimeouts.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolTags](./docs/Get-NMMHostPoolTags.md)|:heavy_check_mark:|
+GET|[Get-NMMHostPoolVMDeployment](./docs/Get-NMMHostPoolVMDeployment.md)|:heavy_check_mark:|
 DELETE|[Remove-NMMHostPool](./docs/Remove-NMMHostPool.md)|N|Q2
 DELETE|[Remove-NMMHostPoolVMs](./docs/Remove-NMMHostPoolVMs.md)|N|Q2
 DELETE|[Remove-NMMHostPoolScheduledJobs](./docs/Remove-NMMHostPoolScheduledJobs.md)|N|Q2
@@ -258,70 +258,70 @@ PUT|[Invoke-NMMHostPoolBulkLogoff](./docs/Invoke-NMMHostPoolBulkLogoff.md)|N|Q2
 PUT|[Invoke-NMMHostPoolBulkDisconnect](./docs/Invoke-NMMHostPoolBulkDisconnect.md)|N|Q2
 PUT|[Invoke-NMMHostPoolBulkMessage](./docs/Invoke-NMMHostPoolBulkMessage.md)|N|Q2
 |**Invoices**
-GET|[Get-NMMInvoiceID](./docs/Get-NMMInvoiceID.md)|Y|
-GET|[Get-NMMInvoices](./docs/Get-NMMInvoices.md)|Y|
-GET|[Get-NMMInvoicesPaid](./docs/Get-NMMInvoicesPaid.md)|Y|
-GET|[Get-NMMInvoicesUnpaid](./docs/Get-NMMInvoicesUnpaid.md)|Y|
+GET|[Get-NMMInvoiceID](./docs/Get-NMMInvoiceID.md)|:heavy_check_mark:|
+GET|[Get-NMMInvoices](./docs/Get-NMMInvoices.md)|:heavy_check_mark:|
+GET|[Get-NMMInvoicesPaid](./docs/Get-NMMInvoicesPaid.md)|:heavy_check_mark:|
+GET|[Get-NMMInvoicesUnpaid](./docs/Get-NMMInvoicesUnpaid.md)|:heavy_check_mark:|
 |**Jobs**
-GET|[Get-NMMJob](./docs/Get-NMMJob.md)|Y|
-GET|[Get-NMMJobTasks](./docs/Get-NMMJobTasks.md)|Y|
-POST|[Restart-NMMJob](./docs/Restart-NMMJob.md)|Y|
+GET|[Get-NMMJob](./docs/Get-NMMJob.md)|:heavy_check_mark:|
+GET|[Get-NMMJobTasks](./docs/Get-NMMJobTasks.md)|:heavy_check_mark:|
+POST|[Restart-NMMJob](./docs/Restart-NMMJob.md)|:heavy_check_mark:|
 |**Networks**
-GET|[Get-NMMAllNetworks](./docs/Get-NMMAllNetworks.md)|Y|
-GET|[Get-NMMManagedNetworks](./docs/Get-NMMManagedNetworks.md)|Y|
-POST|[Register-NMMNetwork](./docs/Register-NMMNetwork.md)|Y|
+GET|[Get-NMMAllNetworks](./docs/Get-NMMAllNetworks.md)|:heavy_check_mark:|
+GET|[Get-NMMManagedNetworks](./docs/Get-NMMManagedNetworks.md)|:heavy_check_mark:|
+POST|[Register-NMMNetwork](./docs/Register-NMMNetwork.md)|:heavy_check_mark:|
 |**Recovery Vault**
-GET|[Get-NMMAllRecoveryVaults](./docs/Get-NMMAllRecoveryVaults.md)|Y|
-GET|[Get-NMMLinkedRecoveryVaults](./docs/Get-NMMLinkedRecoveryVaults.md)|Y|
-GET|[Get-NMMRecoveryVaultPolicies](./docs/Get-NMMRecoveryVaultPolicies.md)|Y|
-GET|[Get-NMMRecoveryVaultPoliciesByRegion](./docs/Get-NMMRecoveryVaultPoliciesByRegion.md)|Y|
-GET|[Get-NMMRecoveryVaultPolicy](./docs/Get-NMMRecoveryVaultPolicy.md)|Y|
-POST|[New-NMMRecoveryVault](./docs/New-NMMRecoveryVault.md)|Y|
+GET|[Get-NMMAllRecoveryVaults](./docs/Get-NMMAllRecoveryVaults.md)|:heavy_check_mark:|
+GET|[Get-NMMLinkedRecoveryVaults](./docs/Get-NMMLinkedRecoveryVaults.md)|:heavy_check_mark:|
+GET|[Get-NMMRecoveryVaultPolicies](./docs/Get-NMMRecoveryVaultPolicies.md)|:heavy_check_mark:|
+GET|[Get-NMMRecoveryVaultPoliciesByRegion](./docs/Get-NMMRecoveryVaultPoliciesByRegion.md)|:heavy_check_mark:|
+GET|[Get-NMMRecoveryVaultPolicy](./docs/Get-NMMRecoveryVaultPolicy.md)|:heavy_check_mark:|
+POST|[New-NMMRecoveryVault](./docs/New-NMMRecoveryVault.md)|:heavy_check_mark:|
 POST|[New-NMMRecoveryVaultPolicy](./docs/New-NMMRecoveryVaultPolicy.md)|N|Q3
-POST|[Register-NMMRecoveryVault](./docs/Register-NMMRecoveryVault.md)|Y|
+POST|[Register-NMMRecoveryVault](./docs/Register-NMMRecoveryVault.md)|:heavy_check_mark:|
 POST|[Set-NMMRerecoveryVaultPolicyResources](./docs/Set-NMMRerecoveryVaultPolicyResources.md)|N|Q3
-DELETE|[Remove-NMMRecoveryVaultPolicy](./docs/Remove-NMMRecoveryVaultPolicy.md)|Y|
-POST|[Unregister-NMMRecoveryVault](./docs/Unregister-NMMRecoveryVault.md)|Y|
+DELETE|[Remove-NMMRecoveryVaultPolicy](./docs/Remove-NMMRecoveryVaultPolicy.md)|:heavy_check_mark:|
+POST|[Unregister-NMMRecoveryVault](./docs/Unregister-NMMRecoveryVault.md)|:heavy_check_mark:|
 |**Reservations**
-GET|[Get-NMMReservationId](./docs/Get-NMMReservationId.md)|Y|
-GET|[Get-NMMReservationIdResources](./docs/Get-NMMReservationIdResources.md)|Y|
-GET|[Get-NMMReservations](./docs/Get-NMMReservations.md)|Y|
-POST|[New-NMMReservation](./docs/New-NMMReservation.md)|Y|
-DELETE|[Remove-NMMReservation](./docs/Remove-NMMReservation.md)|Y|
-POST|[Set-NMMReservation](./docs/Set-NMMReservation.md)|Y|
+GET|[Get-NMMReservationId](./docs/Get-NMMReservationId.md)|:heavy_check_mark:|
+GET|[Get-NMMReservationIdResources](./docs/Get-NMMReservationIdResources.md)|:heavy_check_mark:|
+GET|[Get-NMMReservations](./docs/Get-NMMReservations.md)|:heavy_check_mark:|
+POST|[New-NMMReservation](./docs/New-NMMReservation.md)|:heavy_check_mark:|
+DELETE|[Remove-NMMReservation](./docs/Remove-NMMReservation.md)|:heavy_check_mark:|
+POST|[Set-NMMReservation](./docs/Set-NMMReservation.md)|:heavy_check_mark:|
 |**Resource Group**
-GET|[Get-NMMResourceGroup](./docs/Get-NMMResourceGroup.md)|Y|
-POST|[Register-NMMResourceGroup](./docs/Register-NMMResourceGroup.md)|Y|
-DELETE|[Remove-NMMResourceGroup](./docs/Remove-NMMResourceGroup.md)|Y|
-POST|[Set-DefaultNMMResourceGroup](./docs/Set-DefaultNMMResourceGroup.md)|Y|
+GET|[Get-NMMResourceGroup](./docs/Get-NMMResourceGroup.md)|:heavy_check_mark:|
+POST|[Register-NMMResourceGroup](./docs/Register-NMMResourceGroup.md)|:heavy_check_mark:|
+DELETE|[Remove-NMMResourceGroup](./docs/Remove-NMMResourceGroup.md)|:heavy_check_mark:|
+POST|[Set-DefaultNMMResourceGroup](./docs/Set-DefaultNMMResourceGroup.md)|:heavy_check_mark:|
 |**Scripted Actions**
-GET|[Get-NMMCustomerAzureRunbookSchedule](./docs/Get-NMMCustomerAzureRunbookSchedule.md)|Y|
-GET|[Get-NMMCustomerScriptedAction](./docs/Get-NMMCustomerScriptedAction.md)|Y|
-GET|[Get-NMMScriptedAction](./docs/Get-NMMScriptedAction.md)|Y|
-POST|[Invoke-NMMCustomerScriptedAction](./docs/Invoke-NMMCustomerScriptedAction.md)|Y|
-POST|[Invoke-NMMScriptedAction](./docs/Invoke-NMMScriptedAction.md)|Y|
+GET|[Get-NMMCustomerAzureRunbookSchedule](./docs/Get-NMMCustomerAzureRunbookSchedule.md)|:heavy_check_mark:|
+GET|[Get-NMMCustomerScriptedAction](./docs/Get-NMMCustomerScriptedAction.md)|:heavy_check_mark:|
+GET|[Get-NMMScriptedAction](./docs/Get-NMMScriptedAction.md)|:heavy_check_mark:|
+POST|[Invoke-NMMCustomerScriptedAction](./docs/Invoke-NMMCustomerScriptedAction.md)|:heavy_check_mark:|
+POST|[Invoke-NMMScriptedAction](./docs/Invoke-NMMScriptedAction.md)|:heavy_check_mark:|
 POST|[PH-New-NMMCustomerAzureRunbookSchedule](./docs/PH-New-NMMCustomerAzureRunbookSchedule.md)|N|Q3
-DELETE|[Remove-NMMCustomerAzureRunbookSchedule](./docs/Remove-NMMCustomerAzureRunbookSchedule.md)|Y|
+DELETE|[Remove-NMMCustomerAzureRunbookSchedule](./docs/Remove-NMMCustomerAzureRunbookSchedule.md)|:heavy_check_mark:|
 |**Secure Variables**
-GET|[Get-NMMCustomerSecureVariable](./docs/Get-NMMCustomerSecureVariable.md)|Y|
-GET|[Get-NMMSecureVariable](./docs/Get-NMMSecureVariable.md)|Y|
-POST|[New-NMMCustomerSecureVariable](./docs/New-NMMCustomerSecureVariable.md)|Y|
-POST|[New-NMMSecureVariable](./docs/New-NMMSecureVariable.md)|Y|
-DELETE|[Remove-NMMCustomerSecureVariable](./docs/Remove-NMMCustomerSecureVariable.md)|Y|
-DELETE|[Remove-NMMSecureVariable](./docs/Remove-NMMSecureVariable.md)|Y|
-POST|[Set-NMMCustomerSecureVariable](./docs/Set-NMMCustomerSecureVariable.md)|Y|
-POST|[Set-NMMSecureVariable](./docs/Set-NMMSecureVariable.md)|Y|
+GET|[Get-NMMCustomerSecureVariable](./docs/Get-NMMCustomerSecureVariable.md)|:heavy_check_mark:|
+GET|[Get-NMMSecureVariable](./docs/Get-NMMSecureVariable.md)|:heavy_check_mark:|
+POST|[New-NMMCustomerSecureVariable](./docs/New-NMMCustomerSecureVariable.md)|:heavy_check_mark:|
+POST|[New-NMMSecureVariable](./docs/New-NMMSecureVariable.md)|:heavy_check_mark:|
+DELETE|[Remove-NMMCustomerSecureVariable](./docs/Remove-NMMCustomerSecureVariable.md)|:heavy_check_mark:|
+DELETE|[Remove-NMMSecureVariable](./docs/Remove-NMMSecureVariable.md)|:heavy_check_mark:|
+POST|[Set-NMMCustomerSecureVariable](./docs/Set-NMMCustomerSecureVariable.md)|:heavy_check_mark:|
+POST|[Set-NMMSecureVariable](./docs/Set-NMMSecureVariable.md)|:heavy_check_mark:|
 |**Timezones ids**
 GET|[Get-NMMTimezones](./docs/Get-NMMTimezones.md)|N|Q2
 |**Usage**
-GET|[Get-NMMUsage](./docs/Get-NMMUsage.md)|Y|
+GET|[Get-NMMUsage](./docs/Get-NMMUsage.md)|:heavy_check_mark:|
 |**User Sessions**
-GET|[Get-NMMHostPoolSessions](./docs/Get-NMMHostPoolSessions.md)|Y|
-GET|[Get-NMMWorkspaceSessions](./docs/Get-NMMWorkspaceSessions.md)|Y|
+GET|[Get-NMMHostPoolSessions](./docs/Get-NMMHostPoolSessions.md)|:heavy_check_mark:|
+GET|[Get-NMMWorkspaceSessions](./docs/Get-NMMWorkspaceSessions.md)|:heavy_check_mark:|
 POST|[Invoke-NMMUserSessionLogoff](./docs/Invoke-NMMUserSessionLogoff.md)|N|Q2
 POST|[Invoke-NMMUserSessionDisconnect](./docs/Invoke-NMMUserSessionDisconnect.md)|N|Q2
 POST|[Invoke-NMMUserSessionMessage](./docs/Invoke-NMMUserSessionMessage.md)|N|Q2
 |**Workspace**
-GET|[Get-NMMWorkspace](./docs/Get-NMMWorkspace.md)|Y|
-POST|[New-NMMWorkspace](./docs/New-NMMWorkspace.md)|Y|
+GET|[Get-NMMWorkspace](./docs/Get-NMMWorkspace.md)|:heavy_check_mark:|
+POST|[New-NMMWorkspace](./docs/New-NMMWorkspace.md)|:heavy_check_mark:|
 
