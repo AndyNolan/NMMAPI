@@ -170,7 +170,7 @@ This table corresponds to the most recent REST API endpoints in Nerdio Manager f
 **REST Method**|**PowerShell Command**|**Implemented**|**ETA**
 :-----:|:-----:|:-----:|:-----:
 |**Test**
-GET|[Test-NMMAPI](./docs/Test-NMMAPI.md)|Y|Q1
+GET|[Test-NMMAPI](./docs/Test-NMMAPI.md)|Y|[x]
 |**Account Provisioning**
 POST|[Register-NMMAD](./docs/Register-NMMAD.md)|Y|
 POST|[Register-NMMFileStorage](./docs/Register-NMMFileStorage.md)|Y|
