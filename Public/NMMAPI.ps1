@@ -217,7 +217,10 @@ function Register-NMMTenant {
 #Region Accounts
 function Get-NMMCustomers {
     [CmdletBinding()]
-    Param()
+    Param(
+        [Parameter()]
+        [String]$search
+    )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
             Write-Warning "No NMM Token present, or expired, running Get-NMMToken now."
@@ -232,6 +235,9 @@ function Get-NMMCustomers {
     PROCESS {
         Try{
         $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts" -Headers $requestHeaders
+        if ($search) {
+            $result = $result | Where-Object { $_.name -match $search }
+        }
         $OK = $True
         }
         Catch{
@@ -351,7 +357,6 @@ function Add-NMMCredentials {
              # Define the regular expression pattern for the required URI string
             $nmmoAuthRegex = "https://login.microsoftonline.com/.+/oauth2/v2.0/token$"
             if($nmmoAuthToken.AbsoluteUri -match $nmmoAuthRegex){
-                # All Good Man
                 Set-Variable -Name 'nmmOauth' -Value $nmmoAuthToken.AbsoluteUri -Scope Global
             }
             else {
@@ -590,7 +595,7 @@ function Disable-NMMCustomerBackup {
 function Enable-NMMCustomerBackup {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory)] 
+    [Parameter(Mandatory)]
     [string]$sourceResourceId,
     [string]$backupPolicy,
     [int]$nmmId
