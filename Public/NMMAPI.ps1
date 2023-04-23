@@ -2,8 +2,8 @@
 function Register-NMMAD {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
-        [int]$accountId,
+        [Parameter(Mandatory,ValueFromPipeline)]
+        [int]$nmmId,
         [string]$domainName,
         [string]$domainAdminUser,
         [string]$domainAdminPass,
@@ -21,7 +21,7 @@ function Register-NMMAD {
  
         $requestBody = @(@"
         {
-            "accountId": $($accountId),
+            "nmmId": $($nmmId),
             "domainName": "$($domainName)",
             "domainAdminUsername": "$($domainAdminUser)",
             "domainAdminPassword": "$($domainAdminPass)",
@@ -32,7 +32,7 @@ function Register-NMMAD {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accountprovisioning/connecttoexistingad" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accountprovisioning/connecttoexistingad" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -56,8 +56,8 @@ function Register-NMMAD {
 function Register-NMMFileStorage {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
-        [int]$accountId,
+        [Parameter(Mandatory)]
+        [int]$nmmId,
         [string]$uncPath
     )
     BEGIN{
@@ -72,7 +72,7 @@ function Register-NMMFileStorage {
  
         $requestBody = @(@"
         {
-            "accountId": $($accountId),
+            "nmmId": $($nmmId),
             "uncPath": "$($uncPath)"
           }
 "@)
@@ -80,7 +80,7 @@ function Register-NMMFileStorage {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accountprovisioning/configureFileStorage" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accountprovisioning/configureFileStorage" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -104,8 +104,8 @@ function Register-NMMFileStorage {
 function Register-NMMNetwork {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
-        [int]$accountId,
+        [Parameter(Mandatory)]
+        [int]$nmmId,
         [string]$resourceGroup,
         [string]$networkId,
         [string]$subnetName
@@ -122,7 +122,7 @@ function Register-NMMNetwork {
  
         $requestBody = @(@"
         {
-            "accountId": $($accountId),
+            "nmmId": $($nmmId),
             "existingResourceGroupName": "$($resourceGroup)",
             "existingNetwork": {
               "networkId": "$($networkId)",
@@ -134,7 +134,7 @@ function Register-NMMNetwork {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accountprovisioning/linknetwork" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accountprovisioning/linknetwork" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -158,7 +158,7 @@ function Register-NMMNetwork {
 function Register-NMMTenant {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$subscriptionId,
         [string]$azureAccessToken,
         [string]$graphAccessToken,
@@ -191,7 +191,7 @@ function Register-NMMTenant {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accountprovisioning/linktenant" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accountprovisioning/linktenant" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -231,7 +231,7 @@ function Get-NMMCustomers {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -271,7 +271,7 @@ function Get-NMMAppRoleAssignments {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/app-role-assignments" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/app-role-assignments" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -308,7 +308,7 @@ function Get-NMMAppRoles {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/app-role-assignments/roles" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/app-role-assignments/roles" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -402,7 +402,7 @@ function Add-NMMCredentials {
         #Set-Variable -Name 'nmmSecret' -Value $($nmmconfsecret | ConvertTo-SecureString -AsPlainText -Force) -Scope Global 
     }
     PROCESS {
-        Set-Variable -Name 'nmmApiConstruct' -Value "https://$nmmbaseuri/rest-api/v1/" -Scope Global
+        Set-Variable -Name 'nmmApiConstruct' -Value "$nmmApiConstruct" -Scope Global
         Write-Host "Testing connectivity to the NMM API located at $nmmBaseUri"
         Test-NMMAPI
     }
@@ -480,7 +480,7 @@ function Import-NMMCredentials {
             Set-Variable -Name 'nmmClientId' -Value $nmmCredentials.nmmClientId -Scope Global 
             Set-Variable -Name 'nmmScope' -Value $nmmCredentials.nmmScope -Scope Global 
             Set-Variable -Name 'nmmSecret' -Value $($nmmCredentials.nmmSecret | ConvertTo-SecureString) -Scope Global
-            Set-Variable -Name 'nmmApiConstruct' -Value "https://$($nmmCredentials.nmmbaseuri)/rest-api/v1/" -Scope Global
+            Set-Variable -Name 'nmmApiConstruct' -Value "https://$($nmmCredentials.nmmbaseuri)/rest-api/v1" -Scope Global
             Test-NMMAPI
 
         } else {
@@ -504,7 +504,7 @@ function Test-NMMAPI {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/test" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/test" -Headers $requestHeaders
         if($result -match "Hi, rest api"){
             $OK = $true
         }
@@ -539,10 +539,10 @@ function Test-NMMAPI {
 function Disable-NMMCustomerBackup {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$sourceResourceId,
     [string]$protectedItemId,
-    [int]$customerID,
+    [int]$nmmId,
     [boolean]$removeAllBackups
     )
     BEGIN{
@@ -565,7 +565,7 @@ function Disable-NMMCustomerBackup {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/backup/disable" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/backup/disable" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
             $OK = $True
 
         }
@@ -590,10 +590,10 @@ function Disable-NMMCustomerBackup {
 function Enable-NMMCustomerBackup {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$sourceResourceId,
     [string]$backupPolicy,
-    [int]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -614,7 +614,7 @@ function Enable-NMMCustomerBackup {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/backup/enable" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/backup/enable" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
             $OK = $True
 
         }
@@ -640,8 +640,8 @@ function Get-NMMCustomerProtectedItems {
     # Gets customer protected items
     [CmdletBinding()]
     Param(        
-    [Parameter(Mandatory = $true)] 
-    [string]$customerID
+    [Parameter(Mandatory)] 
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -656,8 +656,8 @@ function Get-NMMCustomerProtectedItems {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/backup/protectedItems" -Headers $requestHeaders
-            $result | Add-Member -MemberType NoteProperty "customerID" -Value $customerID
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/backup/protectedItems" -Headers $requestHeaders
+            $result | Add-Member -MemberType NoteProperty "nmmId" -Value $nmmId
             $OK = $True
         }
         Catch{
@@ -682,14 +682,10 @@ function Get-NMMCustomerRecoveryPoints {
     # Gets customer protected items
     [CmdletBinding()]
     Param(        
-    [Parameter(Mandatory = $true,
-        ValueFromPipeLine = $true,
-        ValueFromPipelineByPropertyName = $true)] 
-    [int]$customerID,
+    [Parameter(Mandatory,ValueFromPipeLine,ValueFromPipelineByPropertyName)] 
+    [int]$nmmId,
     [Alias("id")]
-    [Parameter(Mandatory = $false,
-        ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName = $true)]
+    [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
     [string]$protectedItemId
     )
     BEGIN{
@@ -705,8 +701,8 @@ function Get-NMMCustomerRecoveryPoints {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/backup/recoveryPoints?protectedItemId=$($protectedItemId)" -Headers $requestHeaders
-            $result | Add-Member -MemberType NoteProperty "customerID" -Value $customerID
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/backup/recoveryPoints?protectedItemId=$($protectedItemId)" -Headers $requestHeaders
+            $result | Add-Member -MemberType NoteProperty "nmmId" -Value $nmmId
             $OK = $True
         }
         Catch{
@@ -730,10 +726,10 @@ function Get-NMMCustomerRecoveryPoints {
 function Invoke-NMMCustomerBackup {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$sourceResourceId,
     [string]$protectedItemId,
-    [int]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -754,7 +750,7 @@ function Invoke-NMMCustomerBackup {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/backup" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/backup" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
             $OK = $True
 
         }
@@ -779,10 +775,10 @@ function Invoke-NMMCustomerBackup {
 function Invoke-NMMCustomerRestore {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$sourceResourceId,
     [string]$recoveryPointId,
-    [int]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -803,7 +799,7 @@ function Invoke-NMMCustomerRestore {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/backup/restore" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/backup/restore" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
             $OK = $True
 
         }
@@ -848,11 +844,11 @@ function Get-NMMEstimate {
     PROCESS {
         Try{
             if($estimateId){
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/costestimator/$($estimateID)" -Headers $requestHeaders
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/costestimator/$($estimateID)" -Headers $requestHeaders
             $OK = $True
             }
             else{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/costestimator/list" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/costestimator/list" -Headers $requestHeaders
                 $OK = $True
             }
         }
@@ -880,14 +876,8 @@ function Get-NMMEstimate {
 function Get-NMMDesktopImage{
     [CmdletBinding()]
     Param (
-        [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -899,29 +889,11 @@ function Get-NMMDesktopImage{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for desktop images for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for desktop images for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $customerDesktops = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/desktop-image" -Headers $requestHeaders
-        $customerDesktops | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $customerDesktops = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/desktop-image" -Headers $requestHeaders
+        $customerDesktops | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
         $OK = $True
         }
         Catch{
@@ -945,27 +917,15 @@ function Get-NMMDesktopImage{
 function Get-NMMDesktopImageChangelog{
     [CmdletBinding()]
     Param (
-        [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$name,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Alias("subscriptionId")]
-        [string]$subscription,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [string]$subscription
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -977,29 +937,11 @@ function Get-NMMDesktopImageChangelog{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for desktop images changelog for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for desktop images changelog for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $desktopChangelog = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/desktop-image/$($subscription)/$($resourceGroup)/$($name)/change-log" -Headers $requestHeaders
-       # $desktopChangelog | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $desktopChangelog = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/desktop-image/$($subscription)/$($resourceGroup)/$($name)/change-log" -Headers $requestHeaders
+       # $desktopChangelog | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
         $OK = $True
         }
         Catch{
@@ -1024,26 +966,15 @@ function Get-NMMDesktopImageDetail{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$name,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $true,
-        ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Alias("subscriptionId")]
-        [string]$subscription,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [string]$subscription
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1055,29 +986,11 @@ function Get-NMMDesktopImageDetail{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for desktop images for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for desktop images for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $desktopDetail = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/desktop-image/$($subscription)/$($resourceGroup)/$($name)" -Headers $requestHeaders
-       # $desktopDetail | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $desktopDetail = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/desktop-image/$($subscription)/$($resourceGroup)/$($name)" -Headers $requestHeaders
+       # $desktopDetail | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
         $OK = $True
         }
         Catch{
@@ -1101,14 +1014,13 @@ function Get-NMMDesktopImageDetail{
 function Start-NMMDesktopImage{
     [CmdletBinding()]
     Param (
-        [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$name,
-[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
-[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Alias("subscriptionId")]
         [string]$subscription
     )
@@ -1125,8 +1037,8 @@ function Start-NMMDesktopImage{
     }
     PROCESS {
         Try{
-        $desktopStart = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/desktop-image/$($subscription)/$($resourceGroup)/$($name)/start" -Headers $requestHeaders
-       # $desktopStart | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $desktopStart = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/accounts/$($nmmId)/desktop-image/$($subscription)/$($resourceGroup)/$($name)/start" -Headers $requestHeaders
+       # $desktopStart | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
         $OK = $True
         }
         Catch{
@@ -1150,14 +1062,13 @@ function Start-NMMDesktopImage{
 function Stop-NMMDesktopImage{
     [CmdletBinding()]
     Param (
-        [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$name,
-[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
-[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [Alias("subscriptionId")]
         [string]$subscription
     )
@@ -1174,8 +1085,8 @@ function Stop-NMMDesktopImage{
     }
     PROCESS {
         Try{
-        $desktopStop = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/desktop-image/$($subscription)/$($resourceGroup)/$($name)/stop" -Headers $requestHeaders
-       # $desktopStop | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $desktopStop = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/accounts/$($nmmId)/desktop-image/$($subscription)/$($resourceGroup)/$($name)/stop" -Headers $requestHeaders
+       # $desktopStop | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
         $OK = $True
         }
         Catch{
@@ -1203,7 +1114,7 @@ function Get-NMMDirectories {
     [CmdletBinding()]
     Param(
     [Parameter(Mandatory = $false)] 
-    [int]$customerId
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1218,12 +1129,12 @@ function Get-NMMDirectories {
     }
     PROCESS {
         Try{
-            if($customerId){
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/directories" -Headers $requestHeaders
+            if($nmmId){
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/directories" -Headers $requestHeaders
             $OK = $True
             }
             else{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/directories" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/directories" -Headers $requestHeaders
                 $OK = $True
             }
         }
@@ -1251,8 +1162,8 @@ function Get-NMMDirectories {
 function Get-NMMFSlogixConfig {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
-    [int]$customerId
+    [Parameter(Mandatory)] 
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1267,7 +1178,7 @@ function Get-NMMFSlogixConfig {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/fslogix" -Headers $requestHeaders
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/fslogix" -Headers $requestHeaders
             $OK = $True
         }
         Catch{
@@ -1295,27 +1206,16 @@ function Get-NMMHosts{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("hostPoolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPool,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPool
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1327,28 +1227,10 @@ function Get-NMMHosts{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for hosts in ($($hostPool)) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for hosts in ($($hostPool)) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $hosts = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts" -Headers $requestHeaders
+        $hosts = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1373,31 +1255,18 @@ function Restart-NMMHost{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("hostPoolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$hostPool,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostName,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1409,28 +1278,10 @@ function Restart-NMMHost{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for hosts in ($($hostPool)) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for hosts in ($($hostPool)) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $hosts = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts/$($hostName)/start" -Headers $requestHeaders
+        $hosts = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts/$($hostName)/restart" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1455,27 +1306,17 @@ function Start-NMMHost{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("hostPoolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$hostPool,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$hostName,
         [Parameter(Mandatory = $false,
             ValueFromPipeline = $false)]
@@ -1491,28 +1332,10 @@ function Start-NMMHost{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for hosts in ($($hostPool)) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for hosts in ($($hostPool)) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $hosts = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts/$($hostName)/start" -Headers $requestHeaders
+        $hosts = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts/$($hostName)/start" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1537,31 +1360,18 @@ function Stop-NMMHost{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("hostPoolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$hostPool,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostName,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1573,28 +1383,10 @@ function Stop-NMMHost{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for hosts in ($($hostPool)) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for hosts in ($($hostPool)) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $hosts = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts/$($hostName)/stop" -Headers $requestHeaders
+        $hosts = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/hosts/$($hostName)/stop" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1622,13 +1414,8 @@ function Get-NMMHostPool{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1640,29 +1427,11 @@ function Get-NMMHostPool{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all Host Pools for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for all Host Pools for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $customerHostPools = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool" -Headers $requestHeaders
-        $customerHostPools | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $customerHostPools = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool" -Headers $requestHeaders
+        $customerHostPools | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
         $OK = $True
         }
         Catch{
@@ -1687,27 +1456,16 @@ function Get-NMMHostPoolAD{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1719,28 +1477,10 @@ function Get-NMMHostPoolAD{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool Active Directory configuration for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool Active Directory configuration for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/active-directory" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/active-directory" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1765,27 +1505,16 @@ function Get-NMMHostPoolAssignedUsers{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1797,28 +1526,10 @@ function Get-NMMHostPoolAssignedUsers{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool user assignments for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool user assignments for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/assigned-users" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/assigned-users" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1843,27 +1554,16 @@ function Get-NMMHostPoolAutoscale{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1875,28 +1575,10 @@ function Get-NMMHostPoolAutoscale{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool autoscale configuration for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool autoscale configuration for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/autoscale-configuration" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/autoscale-configuration" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1921,27 +1603,16 @@ function Get-NMMHostPoolAVD{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -1953,28 +1624,10 @@ function Get-NMMHostPoolAVD{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool AVD configuration for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool AVD configuration for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/avd" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/avd" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -1999,27 +1652,16 @@ function Get-NMMHostPoolFSLogix{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2031,28 +1673,10 @@ function Get-NMMHostPoolFSLogix{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool FSLogix config for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool FSLogix config for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/fslogix" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/fslogix" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2077,27 +1701,16 @@ function Get-NMMHostPoolRDPSettings{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2109,28 +1722,10 @@ function Get-NMMHostPoolRDPSettings{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool RDP settings for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool RDP settings for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/rdp-settings" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/rdp-settings" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2155,27 +1750,16 @@ function Get-NMMHostPoolSessionTimeouts{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2187,28 +1771,10 @@ function Get-NMMHostPoolSessionTimeouts{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool session timeouts for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool session timeouts for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/session-timeouts" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/session-timeouts" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2233,27 +1799,16 @@ function Get-NMMHostPoolTags{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2265,28 +1820,10 @@ function Get-NMMHostPoolTags{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool tags for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool tags for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/tags" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/tags" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2311,27 +1848,16 @@ function Get-NMMHostPoolVMDeployment{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("poolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPoolName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPoolName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2343,28 +1869,10 @@ function Get-NMMHostPoolVMDeployment{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for Host Pool VM deployment settings for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for Host Pool VM deployment settings for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/vm-deployment" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPoolName)/vm-deployment" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2391,7 +1899,7 @@ function Get-NMMHostPoolVMDeployment{
 function Get-NMMInvoiceID {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [int]$invoiceId
     )
     BEGIN{
@@ -2407,7 +1915,7 @@ function Get-NMMInvoiceID {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/invoices/$($invoiceId)" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/invoices/$($invoiceId)" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2431,9 +1939,9 @@ function Get-NMMInvoiceID {
 function Get-NMMInvoices {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$startTime,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$endTime
     )
     BEGIN{
@@ -2452,7 +1960,7 @@ function Get-NMMInvoices {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/invoices?periodStart=$($startTimeStr)&periodEnd=$($endTimeStr)&hidePaid=false&hideUnpaid=false" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/invoices?periodStart=$($startTimeStr)&periodEnd=$($endTimeStr)&hidePaid=false&hideUnpaid=false" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2476,9 +1984,9 @@ function Get-NMMInvoices {
 function Get-NMMInvoicesPaid {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$startTime,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$endTime
     )
     BEGIN{
@@ -2497,7 +2005,7 @@ function Get-NMMInvoicesPaid {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/invoices?periodStart=$($startTimeStr)&periodEnd=$($endTimeStr)&hidePaid=false&hideUnpaid=true" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/invoices?periodStart=$($startTimeStr)&periodEnd=$($endTimeStr)&hidePaid=false&hideUnpaid=true" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2521,9 +2029,9 @@ function Get-NMMInvoicesPaid {
 function Get-NMMInvoicesUnpaid {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$startTime,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$endTime
     )
     BEGIN{
@@ -2542,7 +2050,7 @@ function Get-NMMInvoicesUnpaid {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/invoices?periodStart=$($startTimeStr)&periodEnd=$($endTimeStr)&hidePaid=true&hideUnpaid=false" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/invoices?periodStart=$($startTimeStr)&periodEnd=$($endTimeStr)&hidePaid=true&hideUnpaid=false" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2569,7 +2077,7 @@ function Get-NMMInvoicesUnpaid {
 function Get-NMMJob {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [int]$jobId
     )
     BEGIN{
@@ -2585,7 +2093,7 @@ function Get-NMMJob {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/job/$($jobId)" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/job/$($jobId)" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2609,7 +2117,7 @@ function Get-NMMJob {
 function Get-NMMJobTasks {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [int]$jobId
     )
     BEGIN{
@@ -2625,7 +2133,7 @@ function Get-NMMJobTasks {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/job/$($jobId)/tasks" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/job/$($jobId)/tasks" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2649,7 +2157,7 @@ function Get-NMMJobTasks {
 function Restart-NMMJob {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [int]$jobId
     )
     BEGIN{
@@ -2665,7 +2173,7 @@ function Restart-NMMJob {
     }
     PROCESS {
         Try{
-                $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/job/$($jobId)" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/job/$($jobId)" -Headers $requestHeaders
                 $OK = $True
         }
         Catch{
@@ -2693,7 +2201,7 @@ function Get-NMMAllNetworks {
     [CmdletBinding()]
     Param(
     [Parameter(Mandatory = $false)] 
-    [int]$customerId
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2708,7 +2216,7 @@ function Get-NMMAllNetworks {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/networks/all" -Headers $requestHeaders
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/networks/all" -Headers $requestHeaders
             $OK = $True
         }
         Catch{
@@ -2733,7 +2241,7 @@ function Get-NMMManagedNetworks {
     [CmdletBinding()]
     Param(
     [Parameter(Mandatory = $false)] 
-    [int]$customerId
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2748,7 +2256,7 @@ function Get-NMMManagedNetworks {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/networks" -Headers $requestHeaders
+            $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/networks" -Headers $requestHeaders
             $OK = $True
         }
         Catch{
@@ -2772,8 +2280,8 @@ function Get-NMMManagedNetworks {
 function Register-NMMNetwork {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
-    [int]$customerId,
+    [Parameter(Mandatory)] 
+    [int]$nmmId,
     [string]$networkId,
     [string]$subnetName
     )
@@ -2796,7 +2304,7 @@ function Register-NMMNetwork {
     }
     PROCESS {
         Try{
-            $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/networks/link" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/networks/link" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
             $OK = $True
         }
         Catch{
@@ -2824,13 +2332,8 @@ function Get-NMMAllRecoveryVaults{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2842,28 +2345,10 @@ function Get-NMMAllRecoveryVaults{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all Recovery Vaults for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for all Recovery Vaults for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $allCustomerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/allvaults" -Headers $requestHeaders
+        $allCustomerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/allvaults" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2888,13 +2373,8 @@ function Get-NMMLinkedRecoveryVaults{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -2906,28 +2386,10 @@ function Get-NMMLinkedRecoveryVaults{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for linked Recovery Vaults for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for linked Recovery Vaults for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $customerVaults = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault" -Headers $requestHeaders
+        $customerVaults = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -2953,7 +2415,7 @@ function Get-NMMRecoveryVaultPolicies{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [String]$vaultId
     )
@@ -2967,16 +2429,10 @@ function Get-NMMRecoveryVaultPolicies{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all Recovery Vault policies $($policyName) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
     }
     PROCESS {
         Try{
-        $customerVaultPolicy = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/policies?vaultId=$($vaultId)" -Headers $requestHeaders
+        $customerVaultPolicy = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/policies?vaultId=$($vaultId)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3002,7 +2458,7 @@ function Get-NMMRecoveryVaultPoliciesByRegion{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [String]$region
     )
@@ -3016,16 +2472,10 @@ function Get-NMMRecoveryVaultPoliciesByRegion{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all Recovery Vault policies in the $($region) region for customer $($customerData.name) (ID: $($customerData.id))"
-        }
     }
     PROCESS {
         Try{
-        $customerRvPolRegion = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/regionpolicyinfo/$($region)" -Headers $requestHeaders
+        $customerRvPolRegion = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/regionpolicyinfo/$($region)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3051,7 +2501,7 @@ function Get-NMMRecoveryVaultPolicy{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [String]$policyName,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
@@ -3067,16 +2517,10 @@ function Get-NMMRecoveryVaultPolicy{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all Recovery Vault policy $($policyName) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
     }
     PROCESS {
         Try{
-        $customerVaultPolicy = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/policy?vaultId=$($vaultId)&policyName=$($policyName)" -Headers $requestHeaders
+        $customerVaultPolicy = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/policy?vaultId=$($vaultId)&policyName=$($policyName)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3102,7 +2546,7 @@ function New-NMMRecoveryVault{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [string]$vaultName,
         [string]$resourceGroup,
         [string]$location,
@@ -3118,7 +2562,7 @@ function New-NMMRecoveryVault{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $rgValidation = Get-NMMResourceGroup -customerId $customerID | Where-Object name -match $resourceGroup
+        $rgValidation = Get-NMMResourceGroup -nmmId $nmmId | Where-Object name -match $resourceGroup
         
         if($rgValidation.Count -eq 1){
             Write-Host "Found a match for resource group, using $($rgValidation.resourceGroupId) to create a new Recovery Vault!"
@@ -3146,7 +2590,7 @@ function New-NMMRecoveryVault{
     }
     PROCESS {
         Try{
-        $newVault = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $newVault = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -3172,7 +2616,7 @@ function Register-NMMRecoveryVault{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
 [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$vaultID
     )
@@ -3186,7 +2630,7 @@ function Register-NMMRecoveryVault{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $vaultValidation = Get-NMMAllRecoveryVaults -customerId $customerID | Where-Object id -match $vaultID
+        $vaultValidation = Get-NMMAllRecoveryVaults -nmmId $nmmId | Where-Object id -match $vaultID
         
         if($vaultValidation.Count -eq 1){
             Write-Host "Found a match for vault ID, linking $($vaultValidation.id) to NMM!"
@@ -3204,7 +2648,7 @@ function Register-NMMRecoveryVault{
     }
     PROCESS {
         Try{
-        $newVault = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/link/vault?vaultId=$($matchedVaultId)" -Headers $requestHeaders
+        $newVault = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/link/vault?vaultId=$($matchedVaultId)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3230,7 +2674,7 @@ function Remove-NMMRecoveryVaultPolicy{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [String]$policyName,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
@@ -3246,16 +2690,10 @@ function Remove-NMMRecoveryVaultPolicy{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Deleting $($policyName) from recovery vault for customer $($customerData.name) (ID: $($customerData.id))"
-        }
     }
     PROCESS {
         Try{
-        $customerVaultPolicy = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/policy?vaultId=$($vaultId)&policyName=$($policyName)" -Headers $requestHeaders
+        $customerVaultPolicy = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/policy?vaultId=$($vaultId)&policyName=$($policyName)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3281,7 +2719,7 @@ function Unregister-NMMRecoveryVault{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$vaultID
     )
@@ -3295,7 +2733,7 @@ function Unregister-NMMRecoveryVault{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $vaultValidation = Get-NMMAllRecoveryVaults -customerId $customerID | Where-Object id -match $vaultID
+        $vaultValidation = Get-NMMAllRecoveryVaults -nmmId $nmmId | Where-Object id -match $vaultID
         
         if($vaultValidation.Count -eq 1){
             Write-Host "Found a match for vault ID, unlinking $($vaultValidation.id) to NMM!"
@@ -3313,7 +2751,7 @@ function Unregister-NMMRecoveryVault{
     }
     PROCESS {
         Try{
-        $newVault = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/recovery-vault/unlink/vault?vaultId=$($matchedVaultId)" -Headers $requestHeaders
+        $newVault = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/recovery-vault/unlink/vault?vaultId=$($matchedVaultId)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3342,8 +2780,8 @@ function Get-NMMReservationId{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
-[Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
+        [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [int]$reservationId
     )
     BEGIN{
@@ -3359,7 +2797,7 @@ function Get-NMMReservationId{
     }
     PROCESS {
         Try{
-        $custReservationSpecific = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/reservations/$($reservationId)" -Headers $requestHeaders
+        $custReservationSpecific = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/reservations/$($reservationId)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3385,7 +2823,7 @@ function Get-NMMReservationIdResources{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
 [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [int]$reservationId
     )
@@ -3402,7 +2840,7 @@ function Get-NMMReservationIdResources{
     }
     PROCESS {
         Try{
-        $custReservationSpecific = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/reservations/$($reservationId)/resources" -Headers $requestHeaders
+        $custReservationSpecific = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/reservations/$($reservationId)/resources" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3427,13 +2865,8 @@ function Get-NMMReservations{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3445,28 +2878,10 @@ function Get-NMMReservations{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all reservations for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for all reservations for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $custReservations = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/reservations" -Headers $requestHeaders
+        $custReservations = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/reservations" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3492,7 +2907,7 @@ function New-NMMReservation{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [string]$orderId,
         [string]$orderName,
         [int]$price,
@@ -3540,7 +2955,7 @@ function New-NMMReservation{
     }
     PROCESS {
         Try{
-        $newVault = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/reservations" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $newVault = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/reservations" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -3566,7 +2981,7 @@ function Remove-NMMReservation{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
 [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [int]$reservationId
     )
@@ -3583,7 +2998,7 @@ function Remove-NMMReservation{
     }
     PROCESS {
         Try{
-        $custReservationSpecific = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/reservations/$($reservationId)" -Headers $requestHeaders
+        $custReservationSpecific = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/accounts/$($nmmId)/reservations/$($reservationId)" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3609,7 +3024,7 @@ function New-NMMReservation{
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
 [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [int32]$reservationId,
         [string]$orderId,
@@ -3659,7 +3074,7 @@ function New-NMMReservation{
     }
     PROCESS {
         Try{
-        $newVault = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/reservations/$($reservationId)" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $newVault = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/accounts/$($nmmId)/reservations/$($reservationId)" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -3684,11 +3099,11 @@ function New-NMMReservation{
 
 #Region Resource Group
 function Get-NMMResourceGroup {
-    # Pulls RGs linked to the MSP's NMM instance, unless using the -customerID flag.
+    # Pulls RGs linked to the MSP's NMM instance, unless using the -nmmId flag.
     [CmdletBinding()]
     Param(        
     [Parameter(Mandatory = $false)] 
-    [string]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3704,12 +3119,12 @@ function Get-NMMResourceGroup {
     PROCESS {
         Try{
         
-            if($customerId){
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/resource-group" -Headers $requestHeaders
+            if($nmmId){
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/resource-group" -Headers $requestHeaders
                 $OK = $True
             }
             else {
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/resource-group" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/resource-group" -Headers $requestHeaders
                 $OK = $True
             }
 
@@ -3733,14 +3148,14 @@ function Get-NMMResourceGroup {
     }
 }
 function Register-NMMResourceGroup {
-    # Registers an RG from the MSP's NMM instance, unless using the -customerID flag.
+    # Registers an RG from the MSP's NMM instance, unless using the -nmmId flag.
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$subscriptionId,
     [string]$resourceGroup,
     [Parameter(Mandatory = $false)] 
-    [string]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3762,12 +3177,12 @@ function Register-NMMResourceGroup {
     PROCESS {
         Try{
         
-            if($customerId){
-                $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            if($nmmId){
+                $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
                 $OK = $True
             }
             else {
-                $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+                $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
                 $OK = $True
             }
 
@@ -3791,14 +3206,14 @@ function Register-NMMResourceGroup {
     }
 }
 function Remove-NMMResourceGroup {
-    # Removed specified RG from the MSP's NMM instance, unless using the -customerID flag.
+    # Removed specified RG from the MSP's NMM instance, unless using the -nmmId flag.
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$subscriptionId,
     [string]$resourceGroup,
     [Parameter(Mandatory = $false)] 
-    [string]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3820,12 +3235,12 @@ function Remove-NMMResourceGroup {
     PROCESS {
         Try{
         
-            if($customerId){
-                $result = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            if($nmmId){
+                $result = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/accounts/$($nmmId)/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
                 $OK = $True
             }
             else {
-                $result = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+                $result = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/resource-group/linked" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
                 $OK = $True
             }
 
@@ -3849,14 +3264,14 @@ function Remove-NMMResourceGroup {
     }
 }
 function Set-DefaultNMMResourceGroup {
-    # Set specified RG from the MSP's NMM instance as default, unless using the -customerID flag.
+    # Set specified RG from the MSP's NMM instance as default, unless using the -nmmId flag.
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$subscriptionId,
     [string]$resourceGroup,
     [Parameter(Mandatory = $false)] 
-    [string]$customerID
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3878,12 +3293,12 @@ function Set-DefaultNMMResourceGroup {
     PROCESS {
         Try{
         
-            if($customerId){
-                $result = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/resource-group/setDefault" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+            if($nmmId){
+                $result = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/accounts/$($nmmId)/resource-group/setDefault" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
                 $OK = $True
             }
             else {
-                $result = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/resource-group/setDefault" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+                $result = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/resource-group/setDefault" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
                 $OK = $True
             }
 
@@ -3914,12 +3329,9 @@ function Get-NMMCustomerAzureRunbookSchedule {
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$scriptID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [int]$scriptID
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3931,28 +3343,10 @@ function Get-NMMCustomerAzureRunbookSchedule {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for azure runbook scripted action $($scriptId) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for azure runbook scripted action $($scriptId) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/scripted-actions/$($scriptId)/schedule" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/scripted-actions/$($scriptId)/schedule" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -3977,13 +3371,8 @@ function Get-NMMCustomerScriptedAction {
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -3995,28 +3384,10 @@ function Get-NMMCustomerScriptedAction {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for all scripted actions for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for all scripted actions for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/scripted-actions" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/scripted-actions" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4053,7 +3424,7 @@ function Get-NMMScriptedAction {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/scripted-actions" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/scripted-actions" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4078,10 +3449,8 @@ function Invoke-NMMCustomerScriptedAction {
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerId,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
 [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
     [int]$scriptId,
     [int]$timeoutMins
@@ -4099,7 +3468,7 @@ function Invoke-NMMCustomerScriptedAction {
         if($timeoutMins = $null){
             $timeoutMins = 30
         }
-        $defaultResourceGroup = (Get-NMMResourceGroup -customerId $($customerId) | Where-Object isDefault -eq True).name
+        $defaultResourceGroup = (Get-NMMResourceGroup -nmmId $($nmmId) | Where-Object isDefault -eq True).name
         $requestBody = @(@"
         {
             "adConfigId": null,
@@ -4115,7 +3484,7 @@ function Invoke-NMMCustomerScriptedAction {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/scripted-actions/$($scriptId)/execution" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/scripted-actions/$($scriptId)/execution" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4172,7 +3541,7 @@ function Invoke-NMMScriptedAction {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/scripted-actions/$($scriptId)/execution" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/scripted-actions/$($scriptId)/execution" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4199,12 +3568,9 @@ function Invoke-NMMScriptedAction {
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$scriptID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [int]$scriptID
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -4216,28 +3582,10 @@ function Invoke-NMMScriptedAction {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM to create scripted action $($scriptId) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM to remove scripted action $($scriptId) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/scripted-actions/$($scriptId)/schedule" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/accounts/$($nmmId)/scripted-actions/$($scriptId)/schedule" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4264,12 +3612,9 @@ function Remove-NMMCustomerAzureRunbookSchedule {
     Param (
         [Alias("id")]
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$customerID,
+        [int]$nmmId,
         [Parameter(Mandatory,ValueFromPipeline,ValueFromPipelineByPropertyName)]
-        [int]$scriptID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [int]$scriptID
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -4281,28 +3626,10 @@ function Remove-NMMCustomerAzureRunbookSchedule {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM to remove azure runbook scripted action $($scriptId) for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM to remove azure runbook scripted action $($scriptId) for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/scripted-actions/$($scriptId)/schedule" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/accounts/$($nmmId)/scripted-actions/$($scriptId)/schedule" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4330,13 +3657,8 @@ function Get-NMMCustomerSecureVariable {
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -4348,31 +3670,10 @@ function Get-NMMCustomerSecureVariable {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -match $customerID
-            Write-Host "Querying NMM for all Scripted Actions for $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for all Scripted Actions for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-            elseif ($searchResults.Count -gt 10){
-                Write-Host "Too many results matching $customerSearch, please try again with more specificity."
-            }
-        }
     }
     PROCESS {
         Try{
-        $customerVars = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/secure-variables" -Headers $requestHeaders
+        $customerVars = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/secure-variables" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4385,7 +3686,7 @@ function Get-NMMCustomerSecureVariable {
             }
         }
         If ($OK) {
-            # Write-Output "Secure Vars for $($customerid)"
+            # Write-Output "Secure Vars for $($nmmId)"
             Write-Output $customerVars
         }
     }
@@ -4410,7 +3711,7 @@ function Get-NMMSecureVariable {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/secure-variables" -Headers $requestHeaders
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/secure-variables" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4435,14 +3736,9 @@ function New-NMMCustomerSecureVariable {
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch,
-        [Parameter(Mandatory = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
+        [Parameter(Mandatory)]
         [string]$variableName,
         [string]$variableValue,
         [Parameter(Mandatory = $false)] 
@@ -4458,20 +3754,6 @@ function New-NMMCustomerSecureVariable {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                $customerid = $($searchResults.id)
-                Write-Host "Found single customer match - executing on $($searchResults.name)."
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please enter your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
         $requestBody = @(@"
         {
             "name": "$($variableName)",
@@ -4482,7 +3764,7 @@ function New-NMMCustomerSecureVariable {
     }
     PROCESS {
         Try{
-        $customerVars = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $customerVars = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4495,7 +3777,7 @@ function New-NMMCustomerSecureVariable {
             }
         }
         If ($OK) {
-            # Write-Output "Secure Vars for $($customerid)"
+            # Write-Output "Secure Vars for $($nmmId)"
             Write-Output $customerVars
         }
     }
@@ -4507,7 +3789,7 @@ function New-NMMCustomerSecureVariable {
 function New-NMMSecureVariable {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$variableName,
         [string]$variableValue,
         [Parameter(Mandatory = $false)] 
@@ -4534,7 +3816,7 @@ function New-NMMSecureVariable {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4559,14 +3841,9 @@ function Remove-NMMCustomerSecureVariable {
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch,
-        [Parameter(Mandatory = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
+        [Parameter(Mandatory)]
         [string]$variableName,
         [string]$variableValue,
         [Parameter(Mandatory = $false)] 
@@ -4582,22 +3859,7 @@ function Remove-NMMCustomerSecureVariable {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please enter your customer ID" 
-                $customerid = $customerSelection 
-            }
-            elseif ($searchResults.Count -gt 10){
-                Write-Host "Too many results matching $customerSearch, please try again with more specificity."
-            }
-        }
+
         $requestBody = @(@"
         {
             "name": "$($variableName)"
@@ -4606,7 +3868,7 @@ function Remove-NMMCustomerSecureVariable {
     }
     PROCESS {
         Try{
-        $customerVars = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $customerVars = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/accounts/$($nmmId)/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4619,7 +3881,7 @@ function Remove-NMMCustomerSecureVariable {
             }
         }
         If ($OK) {
-            # Write-Output "Secure Vars for $($customerid)"
+            # Write-Output "Secure Vars for $($nmmId)"
             Write-Output $customerVars
         }
     }
@@ -4631,7 +3893,7 @@ function Remove-NMMCustomerSecureVariable {
 function Remove-NMMSecureVariable {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$variableName
     )
     BEGIN{
@@ -4653,7 +3915,7 @@ function Remove-NMMSecureVariable {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method DELETE -Uri "https://$nmmBaseUri/rest-api/v1/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method DELETE -Uri "$nmmApiConstruct/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4678,14 +3940,9 @@ function Set-NMMCustomerSecureVariable {
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch,
-        [Parameter(Mandatory = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
+        [Parameter(Mandatory)]
         [string]$variableName,
         [string]$variableValue,
         [Parameter(Mandatory = $false)] 
@@ -4701,22 +3958,7 @@ function Set-NMMCustomerSecureVariable {
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please enter your customer ID" 
-                $customerid = $customerSelection 
-            }
-            elseif ($searchResults.Count -gt 10){
-                Write-Host "Too many results matching $customerSearch, please try again with more specificity."
-            }
-        }
+
         $requestBody = @(@"
         {
             "name": "$($variableName)",
@@ -4727,7 +3969,7 @@ function Set-NMMCustomerSecureVariable {
     }
     PROCESS {
         Try{
-        $customerVars = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $customerVars = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/accounts/$($nmmId)/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4740,7 +3982,7 @@ function Set-NMMCustomerSecureVariable {
             }
         }
         If ($OK) {
-            # Write-Output "Secure Vars for $($customerid)"
+            # Write-Output "Secure Vars for $($nmmId)"
             Write-Output $customerVars
         }
     }
@@ -4752,7 +3994,7 @@ function Set-NMMCustomerSecureVariable {
 function Set-NMMSecureVariable {
     [CmdletBinding()]
     Param (
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory)]
         [string]$variableName,
         [string]$variableValue,
         [Parameter(Mandatory = $false)] 
@@ -4779,7 +4021,7 @@ function Set-NMMSecureVariable {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method PUT -Uri "https://$nmmBaseUri/rest-api/v1/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method PUT -Uri "$nmmApiConstruct/secure-variables" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
@@ -4806,14 +4048,14 @@ function Set-NMMSecureVariable {
 function Get-NMMUsage {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$startTime,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [datetime]$endTime,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [bool]$withDetails,
     [Parameter(Mandatory = $false)]
-    [int]$customerId 
+    [int]$nmmId 
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -4831,12 +4073,12 @@ function Get-NMMUsage {
     }
     PROCESS {
         Try{
-                if($customerId){
-                    $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/usages?startDate=$($startTimeStr)&endDate=$($endTimeStr)&withDetails=$($withDetails)" -Headers $requestHeaders
+                if($nmmId){
+                    $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/usages?startDate=$($startTimeStr)&endDate=$($endTimeStr)&withDetails=$($withDetails)" -Headers $requestHeaders
                     $OK = $True
                 }
                 else{
-                $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/usages?startDate=$($startTimeStr)&endDate=$($endTimeStr)&withDetails=$($withDetails)" -Headers $requestHeaders
+                $result = Invoke-RestMethod -Uri "$nmmApiConstruct/usages?startDate=$($startTimeStr)&endDate=$($endTimeStr)&withDetails=$($withDetails)" -Headers $requestHeaders
                 $OK = $True
                 }
         }
@@ -4865,27 +4107,16 @@ function Get-NMMHostPoolSessions{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("hostPoolName")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$hostPool,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$hostPool
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -4897,28 +4128,10 @@ function Get-NMMHostPoolSessions{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for host pool ($($hostPool)) sessions for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for host pool ($($hostPool)) sessions for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $hostPoolSessions = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/sessions" -Headers $requestHeaders
+        $hostPoolSessions = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/host-pool/$($subscription)/$($resourceGroup)/$($hostPool)/sessions" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -4943,27 +4156,16 @@ function Get-NMMWorkspaceSessions{
     [CmdletBinding()]
     Param (
         [Alias("id")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [int]$customerID,
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [int]$nmmId,
         [Alias("subscriptionId")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$subscription,
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
         [string]$resourceGroup,
         [Alias("workspace")]
-        [Parameter(Mandatory = $false,
-            ValueFromPipeline = $true,
-            ValueFromPipelineByPropertyName = $true)]
-        [string]$workspaceName,
-        [Parameter(Mandatory = $false,
-        ValueFromPipeline = $false)]
-        [String]$customerSearch
+        [Parameter(ValueFromPipeline,ValueFromPipelineByPropertyName)]
+        [string]$workspaceName
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -4975,28 +4177,10 @@ function Get-NMMWorkspaceSessions{
             'authorization' = "Bearer " + $nmmToken.access_token
         }
         $begin = Get-Date
-        $customers = Get-NMMCustomers
-        $searchResults = $null
-        if($customerID){
-            $customerData = $customers | Where-Object id -eq $customerID
-            Write-Host "Querying NMM for workspace ($($workspaceName)) sessions for customer $($customerData.name) (ID: $($customerData.id))"
-        }
-        if($customerSearch) {
-            $searchResults = $customers | Where-Object name -match $customerSearch
-            if ($searchResults.Count -eq 1){
-                Write-Host "Match found! Querying NMM for workspace ($($workspaceName)) sessions for customer $($searchResults.name) using ID $($searchResults.id)"
-                $customerid = $($searchResults.id)
-            }
-            if ($searchResults.Count -gt 1){
-                $searchResults | Format-Table
-                [int]$customerSelection = Read-Host "Multiple customers found matching ""$customerSearch"", please select your customer ID" 
-                $customerid = $customerSelection 
-            }
-        }
     }
     PROCESS {
         Try{
-        $workspaceSessions = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerid)/workspace/$($subscription)/$($resourceGroup)/$($workspaceName)/sessions" -Headers $requestHeaders
+        $workspaceSessions = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/workspace/$($subscription)/$($resourceGroup)/$($workspaceName)/sessions" -Headers $requestHeaders
         $OK = $True
         }
         Catch{
@@ -5023,8 +4207,8 @@ function Get-NMMWorkspaceSessions{
 function Get-NMMWorkspace {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
-    [string]$customerID
+    [Parameter(Mandatory)] 
+    [int]$nmmId
     )
     BEGIN{
         if(!$nmmToken -or ((New-TimeSpan -Start $nmmTokenExp -End (Get-Date)).Minutes -gt -1)){
@@ -5039,13 +4223,13 @@ function Get-NMMWorkspace {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/workspace" -Headers $requestHeaders
-        $result | Add-Member -MemberType NoteProperty "customerId" -Value $($customerID)
+        $result = Invoke-RestMethod -Uri "$nmmApiConstruct/accounts/$($nmmId)/workspace" -Headers $requestHeaders
+        $result | Add-Member -MemberType NoteProperty "nmmId" -Value $($nmmId)
 
         $betterOut = [PSCustomObject]@{
             nmmFriendlyName     = $($result.friendlyName)
             nmmDescription      = $($result.description)
-            customerID          = $($result.customerId)
+            nmmId          = $($result.nmmId)
             subscriptionId      = $($result.id.subscriptionId)
             resourceGroup       = $($result.id.resourceGroup)
             workspaceName       = $($result.id.name)
@@ -5073,13 +4257,13 @@ function Get-NMMWorkspace {
 function New-NMMWorkspace {
     [CmdletBinding()]
     Param(
-    [Parameter(Mandatory = $true)] 
-    [int]$customerID,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
+    [int]$nmmId,
+    [Parameter(Mandatory)] 
     [string]$region,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$resourceGroup,
-    [Parameter(Mandatory = $true)] 
+    [Parameter(Mandatory)] 
     [string]$workspaceName
     )
     BEGIN{
@@ -5102,7 +4286,7 @@ function New-NMMWorkspace {
     }
     PROCESS {
         Try{
-        $result = Invoke-RestMethod -Method POST -Uri "https://$nmmBaseUri/rest-api/v1/accounts/$($customerId)/workspace" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
+        $result = Invoke-RestMethod -Method POST -Uri "$nmmApiConstruct/accounts/$($nmmId)/workspace" -Headers $requestHeaders -Body $requestBody -ContentType "application/json"
         $OK = $True
         }
         Catch{
