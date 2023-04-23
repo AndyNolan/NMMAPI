@@ -8,21 +8,24 @@ schema: 2.0.0
 # Disable-NMMCustomerBackup
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+
+Removes customer backup, based on parameters.
 
 ## SYNTAX
 
-```
+```powershell
 Disable-NMMCustomerBackup [-sourceResourceId] <String> [[-protectedItemId] <String>] [[-customerID] <Int32>]
  [[-removeAllBackups] <Boolean>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+
+Removes customer backup, based on parameters. Can remove all, or specific protected items.
 
 ## EXAMPLES
 
 ### Example 1
+
 ```powershell
 PS C:\> {{ Add example code here }}
 ```
@@ -32,6 +35,7 @@ PS C:\> {{ Add example code here }}
 ## PARAMETERS
 
 ### -customerID
+
 {{ Fill customerID Description }}
 
 ```yaml
@@ -47,6 +51,7 @@ Accept wildcard characters: False
 ```
 
 ### -protectedItemId
+
 {{ Fill protectedItemId Description }}
 
 ```yaml
@@ -62,6 +67,7 @@ Accept wildcard characters: False
 ```
 
 ### -removeAllBackups
+
 {{ Fill removeAllBackups Description }}
 
 ```yaml
@@ -77,6 +83,7 @@ Accept wildcard characters: False
 ```
 
 ### -sourceResourceId
+
 {{ Fill sourceResourceId Description }}
 
 ```yaml
@@ -92,6 +99,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
@@ -101,6 +109,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## OUTPUTS
 
 ### System.Object
+
 ## NOTES
 
 ## RELATED LINKS

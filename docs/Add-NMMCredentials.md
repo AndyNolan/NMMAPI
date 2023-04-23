@@ -8,31 +8,42 @@ schema: 2.0.0
 # Add-NMMCredentials
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+
+Collects required information to connect to an NMM install via REST API.
 
 ## SYNTAX
 
-```
+```powershell
 Add-NMMCredentials [[-baseUri] <String>] [[-oAuthToken] <Object>] [[-tenantId] <Object>] [[-clientId] <Object>]
  [[-scope] <Object>] [[-secret] <Object>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+
+Collects required information to connect to an NMM install via REST API.
 
 ## EXAMPLES
 
 ### Example 1
+
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Add-NMMCredentials
+Please input your NMM URL, e.g. nmm.democompany.com: nmm.democompany.com
+Please input your OAuth 2.0 token: OauthToken:)
+Please input your tenant ID: 1234  
+Please input your client ID: 5678
+Please input your scope: 91011/.default 
+Please input your secret: secret!
+Testing connectivity to the NMM API located at nmm.democompany.com...
 ```
 
-{{ Add example description here }}
+If parameters are not automatically applied, user will be prompted to enter relevant data.
 
 ## PARAMETERS
 
 ### -baseUri
-{{ Fill baseUri Description }}
+
+Your NMM install URI, without <https://> or trailing slash.
 
 ```yaml
 Type: String
@@ -47,7 +58,8 @@ Accept wildcard characters: False
 ```
 
 ### -clientId
-{{ Fill clientId Description }}
+
+NMM app registration client id, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
 
 ```yaml
 Type: Object
@@ -62,7 +74,8 @@ Accept wildcard characters: False
 ```
 
 ### -oAuthToken
-{{ Fill oAuthToken Description }}
+
+OAuth token, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
 
 ```yaml
 Type: Object
@@ -77,7 +90,8 @@ Accept wildcard characters: False
 ```
 
 ### -scope
-{{ Fill scope Description }}
+
+Scope for the app registration, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
 
 ```yaml
 Type: Object
@@ -92,7 +106,8 @@ Accept wildcard characters: False
 ```
 
 ### -secret
-{{ Fill secret Description }}
+
+Secret for the app registration, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
 
 ```yaml
 Type: Object
@@ -107,7 +122,8 @@ Accept wildcard characters: False
 ```
 
 ### -tenantId
-{{ Fill tenantId Description }}
+
+Microsoft tenant ID, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
 
 ```yaml
 Type: Object
@@ -122,6 +138,7 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
+
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
@@ -131,6 +148,7 @@ This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable
 ## OUTPUTS
 
 ### System.Object
+
 ## NOTES
 
 ## RELATED LINKS
