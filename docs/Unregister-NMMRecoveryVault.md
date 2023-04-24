@@ -8,30 +8,30 @@ schema: 2.0.0
 # Unregister-NMMRecoveryVault
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Unlinks a recovery vault from NMM
 
 ## SYNTAX
 
 ```
-Unregister-NMMRecoveryVault [-customerID] <Int32> [-vaultID] <String> [<CommonParameters>]
+Unregister-NMMRecoveryVault [-nmmId] <Int32> [-vaultID] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Unlinks a recovery vault from NMM
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Unregister-NMMRecoveryVault -nmmId 57 -vaultId "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroup}/providers/Microsoft.RecoveryServices/vaults/{vaultName}"
 ```
 
-{{ Add example description here }}
+Unlinks a recovery vault from NMM
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

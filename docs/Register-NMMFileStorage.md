@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Register-NMMFileStorage [-accountId] <Int32> [[-uncPath] <String>] [<CommonParameters>]
+Register-NMMFileStorage [-nmmId] <Int32> [[-uncPath] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,8 +30,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -accountId
-{{ Fill accountId Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

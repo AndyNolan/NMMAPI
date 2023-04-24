@@ -8,33 +8,49 @@ schema: 2.0.0
 # Get-NMMCustomerProtectedItems
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Get a list of all items backed up.
 
 ## SYNTAX
 
 ```
-Get-NMMCustomerProtectedItems [-customerID] <String> [<CommonParameters>]
+Get-NMMCustomerProtectedItems [-nmmId] <Int32> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Get a list of all items backed up.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMCustomerProtectedItems -nmmId 57
 ```
 
-{{ Add example description here }}
+API response data:
+    "id": "string",
+    "friendlyName": "string",
+    "sourceResourceId": "string",
+    "protectedItemType": "string",
+    "protectionState": "string",
+    "lastBackupStatus": "string",
+    "lastRestorePoint": "2023-04-24T02:57:25.364Z",
+    "softDeleted": true,
+    "recoveryVault": "string",
+    "policyId": "string",
+    "vaultIsManaged": true,
+    "isBackupInProgress": true,
+    "resourceGroupName": "string",
+    "rgPortalLink": "string"
+
+Also added a customer nmmId addition for easy piping to other NMMAPI commands.
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
 Aliases:
 

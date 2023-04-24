@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-NMMAppRoleAssignments
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+List all App Role Assignments.
 
 ## SYNTAX
 
@@ -17,16 +17,14 @@ Get-NMMAppRoleAssignments [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+List all App Role Assignments, including user type, GUID, UPN, RoleID, expiration etc.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMAppRoleAssignments
 ```
-
-{{ Add example description here }}
 
 ## PARAMETERS
 

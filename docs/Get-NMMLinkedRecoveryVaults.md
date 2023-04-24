@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-NMMLinkedRecoveryVaults [[-customerID] <Int32>] [[-customerSearch] <String>] [<CommonParameters>]
+Get-NMMLinkedRecoveryVaults [[-nmmId] <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,8 +30,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32
@@ -42,21 +42,6 @@ Required: False
 Position: 0
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
-### -customerSearch
-{{ Fill customerSearch Description }}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

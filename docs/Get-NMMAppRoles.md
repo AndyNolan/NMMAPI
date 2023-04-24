@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-NMMAppRoles
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+List all App Roles.
 
 ## SYNTAX
 
@@ -17,16 +17,19 @@ Get-NMMAppRoles [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+List all App Roles.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMAppRoles
+id                       : {guid}
+description              : Full access to all features.
+displayName              : Super Admin
+level                    : 1
+canBeRestrictedByAccount : False
 ```
-
-{{ Add example description here }}
 
 ## PARAMETERS
 

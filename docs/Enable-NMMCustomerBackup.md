@@ -8,31 +8,29 @@ schema: 2.0.0
 # Enable-NMMCustomerBackup
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Enables backups for a specific resource.
 
 ## SYNTAX
 
 ```
-Enable-NMMCustomerBackup [-sourceResourceId] <String> [[-backupPolicy] <String>] [[-customerID] <Int32>]
+Enable-NMMCustomerBackup [-sourceResourceId] <String> [[-backupPolicy] <String>] [[-nmmId] <Int32>]
  [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Enables backups for a specific resource. Must specify the sourceResourceId, backupPolicy and nmmId.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Enable-NMMCustomerBackup -nmmId 57 -sourceResourceId "/subscriptions/e0b52e85-7caf-4260-a772-c0d82e56d407/ResourceGroups/resource-group-1/providers/Microsoft.Compute/virtualmachines/vm-name-1" -backupPolicy "/subscriptions/e0b52e85-7caf-4260-a772-c0d82e56d407/ResourceGroups/resource-group-1/providers/Microsoft.RecoveryServices/vaults/TestVault/backupPolicies/TestPolicy"
 ```
-
-{{ Add example description here }}
 
 ## PARAMETERS
 
 ### -backupPolicy
-{{ Fill backupPolicy Description }}
+Full resource ID of the backup policy.
 
 ```yaml
 Type: String
@@ -46,8 +44,8 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32
@@ -62,7 +60,7 @@ Accept wildcard characters: False
 ```
 
 ### -sourceResourceId
-{{ Fill sourceResourceId Description }}
+Full resource ID of the object to be backed up.
 
 ```yaml
 Type: String

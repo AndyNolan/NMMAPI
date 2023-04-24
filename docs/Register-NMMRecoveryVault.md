@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Register-NMMRecoveryVault [-customerID] <Int32> [-vaultID] <String> [<CommonParameters>]
+Register-NMMRecoveryVault [-nmmId] <Int32> [-vaultID] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,8 +30,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

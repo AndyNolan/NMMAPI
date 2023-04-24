@@ -8,7 +8,7 @@ schema: 2.0.0
 # Get-NMMInvoices
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Get your Nerdio invoice for a specific time period.
 
 ## SYNTAX
 
@@ -17,21 +17,38 @@ Get-NMMInvoices [-startTime] <DateTime> [-endTime] <DateTime> [<CommonParameters
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Get your Nerdio invoice for a specific time period.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMInvoices -startTime 01/01/2023 -endTime 01/31/2023
+
+id                 : xxxxx
+displayId          : NMMPxxxxx
+billingPeriod      : 1/1/2023 12:00:00 AM
+startBillingPeriod : 1/1/2023 12:00:00 AM
+endBillingPeriod   : 2/1/2023 12:00:00 AM
+discounts          : XXXX, XXXX, XXXX
+status             : Paid
+acceptedDateTime   : 1/31/2023 5:08:35 PM
+paidDateTime       : 1/31/2023 5:32:36 PM
+desktopUsersCount  : 40743.124525673299
+cpcUsersCount      : 0
+intuneUsersCount   : 15201
+mauCount           : 0
+acceptedCharges    : 0
+currency           : USD
+invoiceItems       : <individual invoice data goes here>
 ```
 
-{{ Add example description here }}
+This will pull an invoice for your desired period, you need to enter the first day of the month and the last day of the month you're looking for. 
 
 ## PARAMETERS
 
 ### -endTime
-{{ Fill endTime Description }}
+Required to be entered as MM/dd/YYYY format. Ensure it is the last day of the month.
 
 ```yaml
 Type: DateTime
@@ -46,7 +63,7 @@ Accept wildcard characters: False
 ```
 
 ### -startTime
-{{ Fill startTime Description }}
+Required to be entered as MM/dd/YYYY format. Ensure it is the first of the month.
 
 ```yaml
 Type: DateTime

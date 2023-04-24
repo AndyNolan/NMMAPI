@@ -8,30 +8,38 @@ schema: 2.0.0
 # Get-NMMCustomerSecureVariable
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Gets a list of secure vars defined for a customer account.
 
 ## SYNTAX
 
 ```
-Get-NMMCustomerSecureVariable [[-customerID] <Int32>] [[-customerSearch] <String>] [<CommonParameters>]
+Get-NMMCustomerSecureVariable [[-nmmId] <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Gets a list of secure vars defined for a customer account.
 
 ## EXAMPLES
 
 ### Example 1
+
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMCustomerSecureVariable -nmmId 57
+
+name      scriptedActions
+----      ---------------
+var1      {}
+var2      {}
+var3      {}
+var4      {}
 ```
 
-{{ Add example description here }}
+List of vars, and if applicable, any scriptedActions that they are specifically bound to.
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32
@@ -42,21 +50,6 @@ Required: False
 Position: 0
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
-### -customerSearch
-{{ Fill customerSearch Description }}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

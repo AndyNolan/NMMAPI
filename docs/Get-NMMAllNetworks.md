@@ -8,30 +8,35 @@ schema: 2.0.0
 # Get-NMMAllNetworks
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Gets a list of every network available for a customer account
 
 ## SYNTAX
 
 ```
-Get-NMMAllNetworks [[-customerId] <Int32>] [<CommonParameters>]
+Get-NMMAllNetworks [[-nmmId] <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Gets a list of every network available for a customer account, including name, region, resource group, subnets (along with name, and CIDR).
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
-```
+PS C:\> Get-NMMAllNetworks -nmmID 57
 
-{{ Add example description here }}
+id                : /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNet
+                    works/{vnetName}
+name              : {vnetName}
+regionName        : {region}
+resourceGroupName : {rg}
+subnets           : {@{name={snetName}; addressPrefix={CIDR}}, @{name={snetName}; addressPrefix={CIDR}}}
+```
 
 ## PARAMETERS
 
-### -customerId
-{{ Fill customerId Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

@@ -8,30 +8,39 @@ schema: 2.0.0
 # Get-NMMAllRecoveryVaults
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Gets a list of all Recovery Vaults for an account, not just linked ones.
 
 ## SYNTAX
 
 ```
-Get-NMMAllRecoveryVaults [[-customerID] <Int32>] [[-customerSearch] <String>] [<CommonParameters>]
+Get-NMMAllRecoveryVaults [[-nmmId] <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Gets a list of all Recovery Vaults for an account, not just linked ones.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMAllRecoveryVaults -nmmId 57
+name              : BackupVault
+resourceGroupName : ResourceGroup
+region            : AzureRegion
+policies          : {@{id=/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.RecoveryServ
+                    ices/vaults/{backupVault}/backupPolicies/DefaultPolicy; name=DefaultPolicy; schedule=Daily: 2:30 
+                    AM; type=VirtualMachine}, @{id=/subscriptions/{sub}/resourceGroups/{rg}/provide
+                    rs/Microsoft.RecoveryServices/vaults/{backupVault}/backupPolicies/{backupPolicy}; 
+                    name={backupPolicy}; schedule=Daily: 2:00 AM; type=VirtualMachine}}
+id                : /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.RecoveryServices/v
+                    aults/{backupVault}
+portalLink        : https://portal.azure.com/linkGoesHere
 ```
-
-{{ Add example description here }}
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32
@@ -42,21 +51,6 @@ Required: False
 Position: 0
 Default value: None
 Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
-### -customerSearch
-{{ Fill customerSearch Description }}
-
-```yaml
-Type: String
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
 Accept wildcard characters: False
 ```
 

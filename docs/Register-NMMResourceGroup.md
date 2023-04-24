@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Register-NMMResourceGroup [-subscriptionId] <String> [[-resourceGroup] <String>] [[-customerID] <String>]
+Register-NMMResourceGroup [-subscriptionId] <String> [[-resourceGroup] <String>] [[-nmmId] <Int32>]
  [<CommonParameters>]
 ```
 
@@ -31,11 +31,11 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
-Type: String
+Type: Int32
 Parameter Sets: (All)
 Aliases:
 

@@ -13,9 +13,9 @@ Collects required information to connect to an NMM install via REST API.
 
 ## SYNTAX
 
-```powershell
-Add-NMMCredentials [[-baseUri] <String>] [[-oAuthToken] <Object>] [[-tenantId] <Object>] [[-clientId] <Object>]
- [[-scope] <Object>] [[-secret] <Object>] [<CommonParameters>]
+```
+Add-NMMCredentials [[-nmmBaseUri] <Uri>] [[-nmmoAuthToken] <Uri>] [[-nmmTenantId] <String>]
+ [[-nmmClientId] <String>] [[-nmmScope] <String>] [[-nmmSecretx] <SecureString>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -41,28 +41,26 @@ If parameters are not automatically applied, user will be prompted to enter rele
 
 ## PARAMETERS
 
-### -baseUri
-
-Your NMM install URI, without <https://> or trailing slash.
+### -nmmBaseUri
+{{ Fill nmmBaseUri Description }}
 
 ```yaml
-Type: String
+Type: Uri
 Parameter Sets: (All)
 Aliases:
 
 Required: False
 Position: 0
 Default value: None
-Accept pipeline input: True (ByValue)
+Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -clientId
-
-NMM app registration client id, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
+### -nmmClientId
+{{ Fill nmmClientId Description }}
 
 ```yaml
-Type: Object
+Type: String
 Parameter Sets: (All)
 Aliases:
 
@@ -73,28 +71,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -oAuthToken
-
-OAuth token, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
-
-```yaml
-Type: Object
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 1
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -scope
-
-Scope for the app registration, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
+### -nmmScope
+{{ Fill nmmScope Description }}
 
 ```yaml
-Type: Object
+Type: String
 Parameter Sets: (All)
 Aliases:
 
@@ -105,12 +86,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -secret
-
-Secret for the app registration, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
+### -nmmSecretx
+{{ Fill nmmSecretx Description }}
 
 ```yaml
-Type: Object
+Type: SecureString
 Parameter Sets: (All)
 Aliases:
 
@@ -121,12 +101,11 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -tenantId
-
-Microsoft tenant ID, obtained from REST API field in SETTINGS -> INTEGRATION in NMM.
+### -nmmTenantId
+{{ Fill nmmTenantId Description }}
 
 ```yaml
-Type: Object
+Type: String
 Parameter Sets: (All)
 Aliases:
 
@@ -137,8 +116,22 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### CommonParameters
+### -nmmoAuthToken
+{{ Fill nmmoAuthToken Description }}
 
+```yaml
+Type: Uri
+Parameter Sets: (All)
+Aliases:
+
+Required: False
+Position: 1
+Default value: None
+Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### CommonParameters
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS

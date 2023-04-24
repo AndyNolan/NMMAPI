@@ -117,39 +117,6 @@ job
 @{id=187417; status=Completed}
 ```
 
-There is even customer search functionality built into the cmdlet. Using the `-customerSearch` parameter, you can search for a string across your entire customer list.
-
-```powershell
-New-NMMCustomerSecureVariable -customerSearch demo -variableName NewVariable2 -variableValue NewValue2
-Found single customer match - executing on Demo Customer.
-
-job
----
-@{id=187418; status=Completed}
-```
-
-In the event you enter a search term and there are multiple customer matches, you will be provided with a selection menu:
-
-```powershell
-New-NMMCustomerSecureVariable -customerSearch d -variableName NewVariabl|Ne3 -variableValue NewValue3           
-
-id name
--- ----
- 1 Andy Nolan
- 2 Andy Nolan Dev Tenant
- 3 Andy Nolan Gamma Tenant
- 4 Yet Another Andy Test ENV
-42 More Demos
-54 Demo Customer
-
-
-Multiple customers found matching "d", please enter your customer ID: 54
-
-job
----
-@{id=187419; status=Completed}
-```
-
 ## Command legend & documentation
 
 This table corresponds to the most recent REST API endpoints in Nerdio Manager for MSP, in alphabetical order, along with the PowerShell cmdlet to utilize that endpoint and whether or not this is implemented yet in the PowerShell module.

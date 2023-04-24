@@ -8,30 +8,30 @@ schema: 2.0.0
 # Get-NMMCustomerRecoveryPoints
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Gets all recovery points for a specific item.
 
 ## SYNTAX
 
 ```
-Get-NMMCustomerRecoveryPoints [-customerID] <Int32> [[-protectedItemId] <String>] [<CommonParameters>]
+Get-NMMCustomerRecoveryPoints [-nmmId] <Int32> [[-protectedItemId] <String>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Gets all recovery points for a specific item.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Get-NMMCustomerRecoveryPoints -nmmId 57 -protectedItemId "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.RecoveryServices/vaults/{vaultName}/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;{rg};{vm}/protectedItems/VM;iaasvmcontainerv2;{rg};{vm}"
 ```
 
-{{ Add example description here }}
+You will likely want to pipe data collected from recovery vaults or protected items. 
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

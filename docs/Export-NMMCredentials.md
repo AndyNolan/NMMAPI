@@ -8,7 +8,7 @@ schema: 2.0.0
 # Export-NMMCredentials
 
 ## SYNOPSIS
-{{ Fill in the Synopsis }}
+Exports your NMM credentials securely to C:\Users\<username>\NMMAPI\nmmapi.xml using Export-XmlCli on Windows machines.
 
 ## SYNTAX
 
@@ -17,16 +17,20 @@ Export-NMMCredentials [<CommonParameters>]
 ```
 
 ## DESCRIPTION
-{{ Fill in the Description }}
+Exports your NMM credentials securely to C:\Users\<username>\NMMAPI\nmmapi.xml using Export-XmlCli on Windows machines.
 
 ## EXAMPLES
 
 ### Example 1
 ```powershell
-PS C:\> {{ Add example code here }}
-```
+PS C:\AndyNolan\NMMAPI> Export-NMMCredentials
 
-{{ Add example description here }}
+    Directory: C:\Users\andy
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+d--h-           4/23/2023  1:57 PM                NMMAPI
+```
 
 ## PARAMETERS
 

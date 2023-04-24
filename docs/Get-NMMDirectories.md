@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Get-NMMDirectories [[-customerId] <Int32>] [<CommonParameters>]
+Get-NMMDirectories [[-nmmId] <Int32>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -30,8 +30,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -customerId
-{{ Fill customerId Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

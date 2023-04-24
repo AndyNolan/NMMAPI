@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-Invoke-NMMCustomerBackup [-sourceResourceId] <String> [[-protectedItemId] <String>] [[-customerID] <Int32>]
+Invoke-NMMCustomerBackup [-sourceResourceId] <String> [[-protectedItemId] <String>] [[-nmmId] <Int32>]
  [<CommonParameters>]
 ```
 
@@ -31,8 +31,8 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32

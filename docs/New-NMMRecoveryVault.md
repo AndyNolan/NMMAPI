@@ -13,7 +13,7 @@ schema: 2.0.0
 ## SYNTAX
 
 ```
-New-NMMRecoveryVault [-customerID] <Int32> [[-vaultName] <String>] [[-resourceGroup] <String>]
+New-NMMRecoveryVault [-nmmId] <Int32> [[-vaultName] <String>] [[-resourceGroup] <String>]
  [[-location] <String>] [[-replicationType] <String>] [<CommonParameters>]
 ```
 
@@ -31,21 +31,6 @@ PS C:\> {{ Add example code here }}
 
 ## PARAMETERS
 
-### -customerID
-{{ Fill customerID Description }}
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases: id
-
-Required: True
-Position: 0
-Default value: None
-Accept pipeline input: True (ByPropertyName, ByValue)
-Accept wildcard characters: False
-```
-
 ### -location
 {{ Fill location Description }}
 
@@ -58,6 +43,21 @@ Required: False
 Position: 3
 Default value: None
 Accept pipeline input: False
+Accept wildcard characters: False
+```
+
+### -nmmId
+NMM Customer ID
+
+```yaml
+Type: Int32
+Parameter Sets: (All)
+Aliases: id
+
+Required: True
+Position: 0
+Default value: None
+Accept pipeline input: True (ByPropertyName, ByValue)
 Accept wildcard characters: False
 ```
 

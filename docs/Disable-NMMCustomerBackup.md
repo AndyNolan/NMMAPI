@@ -13,30 +13,29 @@ Removes customer backup, based on parameters.
 
 ## SYNTAX
 
-```powershell
-Disable-NMMCustomerBackup [-sourceResourceId] <String> [[-protectedItemId] <String>] [[-customerID] <Int32>]
+```
+Disable-NMMCustomerBackup [-sourceResourceId] <String> [[-protectedItemId] <String>] [[-nmmId] <Int32>]
  [[-removeAllBackups] <Boolean>] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
 
-Removes customer backup, based on parameters. Can remove all, or specific protected items.
+Disables backup for a resource, with the option to remove all historical backups.
 
 ## EXAMPLES
 
 ### Example 1
 
 ```powershell
-PS C:\> {{ Add example code here }}
+PS C:\> Disable-NMMCustomerBackup -nmmID 57 -sourceResourceId "/subscriptions/e0b52e85-7caf-4260-a772-c0d82e56d407/ResourceGroups/resource-group-1/providers/Microsoft.Compute/virtualmachines/vm-name-1" -protectedItemId "/subscriptions/e0b52e85-7caf-4260-a772-c0d82e56d407/resourceGroups/resource-group-1/providers/Microsoft.RecoveryServices/vaults/TestVault/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;resource-group-1;vm-name-1/protectedItems/VM;iaasvmcontainerv2;resource-group-1;vm-name-1"
 ```
 
-{{ Add example description here }}
+This will disable backing up the virtual machine "vm-name-1" identified via `sourceResourceId`. If you were to specify `-removeAllBackups $true` then all previous backups would be destroyed.
 
 ## PARAMETERS
 
-### -customerID
-
-{{ Fill customerID Description }}
+### -nmmId
+NMM Customer ID
 
 ```yaml
 Type: Int32
@@ -99,7 +98,6 @@ Accept wildcard characters: False
 ```
 
 ### CommonParameters
-
 This cmdlet supports the common parameters: -Debug, -ErrorAction, -ErrorVariable, -InformationAction, -InformationVariable, -OutVariable, -OutBuffer, -PipelineVariable, -Verbose, -WarningAction, and -WarningVariable. For more information, see [about_CommonParameters](http://go.microsoft.com/fwlink/?LinkID=113216).
 
 ## INPUTS
