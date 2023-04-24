@@ -12,7 +12,7 @@ This repository, along with the PowerShell Gallery packages, will continue to be
 
 Not all endpoints are included in this module yet - mostly due to the large list of variables needed for some of the functions. Over time I will get to these, and encourage the community to contribute, if folks wish to!
 
-At the bottom of this README.md is a [full list of functions](#command-legend--documentation) along with their implementation status.
+At the bottom of this README.md is a [full list of functions](#command-legend--documentation) along with their implementation status, and some simple documentation for a few commands.
 
 ***
 
@@ -119,7 +119,7 @@ job
 
 ## Command legend & documentation
 
-This table corresponds to the most recent REST API endpoints in Nerdio Manager for MSP, in alphabetical order, along with the PowerShell cmdlet to utilize that endpoint and whether or not this is implemented yet in the PowerShell module.
+This table corresponds to the most recent REST API endpoints in Nerdio Manager for MSP, in alphabetical order, along with the PowerShell cmdlet to utilize that endpoint and whether or not this is implemented yet in the PowerShell module. Explicit documentation for each of these commands are in progress, and while most are self-explanatory, some are a little more awkward. 
 
 **REST Method**|**PowerShell Command**|**Implemented**|**ETA**
 :-----:|:-----:|:-----:|:-----:

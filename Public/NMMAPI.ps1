@@ -449,14 +449,19 @@ function Export-NMMCredentials {
     }
 }
 function Get-NMMToken {
-
     if (!$nmmBaseURI -or !$nmmOauth -or !$nmmTenantId -or !$nmmClientId -or !$nmmScope -or !$nmmSecret) {
         Write-Error "One or more configuration variables are missing. Please run Add-NMMCredentials to re-add and try again."
     }
     else{
-    $tokenSplat = @{
+        if($PSVersionTable.PSVersion.Major -eq 5){
+            $nmmSecretToken = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($nmmSecret))
+        }
+        else{
+            $nmmSecretToken = ($nmmSecret | ConvertFrom-SecureString -AsPlainText)
+        }
+        $tokenSplat = @{
         grant_type = "client_credentials";
-        client_secret = ($nmmSecret | ConvertFrom-SecureString -AsPlainText);
+        client_secret = $nmmSecretToken;
         client_id = $nmmClientId;
         scope = $nmmScope;
         }
